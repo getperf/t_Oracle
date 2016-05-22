@@ -31,9 +31,17 @@ sub parse {
 	}
 	open( my $in, $data_info->input_file ) || die "@!";
 #	$data_info->skip_header( $in );
+	my $is_body = 0;
 	while (my $line = <$in>) {
 		$line=~s/(\r|\n)*//g;			# trim return code
-		# print $line . "\n";
+		if ($line=~/Date:(.*)/) {
+			print "time:$1\n";
+			next;
+		}
+		my ($name, $value) = split(/\s*\|\s*/, $line);
+		next if (!defined($name) || $name eq 'NAME');
+		print "|$name|$value|\n";
+
 		$results{$sec} = $line;
 		$sec += $step;
 	}
