@@ -1,0 +1,54 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 3,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Loads",
+      "graph_tree": "/Oracle/<node_path>/Load",
+      "chart_style": "stack",
+      "graph_items": [
+        "LogicalRd",
+        "BlockChg",
+        "PhysicalRd"
+      ],
+      "graph_item_texts": [
+        "Logical reads",
+        "Block changes",
+        "Physical reads"
+      ],
+      "graph_title": "Oracle - <node> - Block Gets",
+      "datasource_title": "Oracle - <node> - Block Gets"
+    },
+    {
+      "graph_template": "Oracle - Redo",
+      "graph_tree": "/Oracle/<node_path>/Redo",
+      "chart_style": "stack",
+      "graph_items": [
+        "Redo"
+      ],
+      "graph_title": "Oracle - <node> - Redo size",
+      "datasource_title": "Oracle - <node> - Redo size"
+    },
+    {
+      "graph_template": "Oracle - Transactions",
+      "graph_tree": "/Oracle/<node_path>/Transaction",
+      "chart_style": "line2",
+      "graph_items": [
+        "Transactions"
+      ],
+      "graph_title": "Oracle - <node> - Transaction",
+      "datasource_title": "Oracle - <node> - Transaction"
+    },
+    {
+      "graph_template": "Oracle - Executes",
+      "graph_tree": "/Oracle/<node_path>/Execute",
+      "chart_style": "line2",
+      "graph_items": [
+        "Executes"
+      ],
+      "graph_title": "Oracle - <node> - Execute",
+      "datasource_title": "Oracle - <node> - Execute"
+    }
+  ]
+}

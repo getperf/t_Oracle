@@ -1,0 +1,41 @@
+# Define default prompt to <username>@<hostname>:<path><"($|#) ">
+# and print '#' for user "root" and '$' for normal users.
+#
+
+typeset +x PS1="\u@\h:\w\\$ "
+
+#
+# ORACLE environment
+#
+
+umask 022
+
+ORACLE_BASE=/opt/oracle/app
+export ORACLE_BASE
+
+ORACLE_HOME=${ORACLE_BASE}/oracle/product/11.2.0/dbhome_1
+export ORACLE_HOME
+
+ORA_NLS10=$ORACLE_HOME/nls/data
+export ORA_NLS10
+
+NLS_LANG=Japanese_Japan.AL32UTF8
+export NLS_LANG
+
+TNS_ADMIN=$ORACLE_HOME/network/admin
+export TNS_ADMIN
+
+PATH=$ORACLE_HOME/bin:/bin:/usr/bin:/usr/ccs/bin:/usr/openwin/bin:/usr/ucb:/usr/sbin:/usr/local/bin:.
+export PATH
+
+LD_LIBRARY_PATH=/usr/dt/lib:/usr/openwin/lib:/usr/lib:/usr/ucblib:$ORACLE_HOME/ctx/lib
+export LD_LIBRARY_PATH
+
+LD_LIBRARY_PATH_64=$ORACLE_HOME/lib:/usr/dt/lib:/usr/openwin/lib:/usr/lib:/usr/ucblib
+export LD_LIBRARY_PATH_64
+
+LANG=ja_JP.UTF-8
+export LANG
+
+AWT_TOOLKIT=XToolkit
+export AWT_TOOLKIT

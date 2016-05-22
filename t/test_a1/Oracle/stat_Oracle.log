@@ -1,0 +1,29 @@
+schedule:
+  start: 2016/05/23 14:54:30
+  end: 2016/05/23 14:54:46
+jobs:
+  - id: 1
+    out: (null)
+    cmd: _script_/sprep.sh -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -v 7 -s -n 0
+    start: 2016/05/23 14:54:30
+    end: 2016/05/23 14:54:31
+    pid: 8220
+    rc: 0
+  - id: 2
+    out: (null)
+    cmd: _script_/chcsv.sh -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -f ora_seg -x
+    start: 2016/05/23 14:54:36
+    end: 2016/05/23 14:54:36
+    pid: 8451
+    rc: 126
+    errormsg: |
+      sh: /home/psadmin/ptune/script/chcsv.sh: 許可がありません
+  - id: 3
+    out: (null)
+    cmd: _script_/chcsv.sh -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -f ora_tbs -x
+    start: 2016/05/23 14:54:41
+    end: 2016/05/23 14:54:41
+    pid: 8464
+    rc: 126
+    errormsg: |
+      sh: /home/psadmin/ptune/script/chcsv.sh: 許可がありません

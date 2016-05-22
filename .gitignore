@@ -1,0 +1,13 @@
+/analysis/
+/summary/
+/storage/
+/html/
+/node/
+/view/
+/var/
+/lib/Getperf/Command/Master/Oracle.pm
+/lib/Getperf/Command/Master/OracleConfig.pm
+site_info.txt
+.pid
+.stdout
+.stderr
