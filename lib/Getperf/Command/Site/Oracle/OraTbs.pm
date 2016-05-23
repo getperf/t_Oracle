@@ -44,8 +44,8 @@ sub parse {
 
 	my %stats = ();
 	my @tablespaces = keys %results;
-	$stats{tbs} = \@tablespaces;
-	my $info_file = "info/oracle_tbs__${instance}";
+	$stats{ora_tbs} = \@tablespaces;
+	my $info_file = "info/ora_tbs__${instance}";
 	$data_info->regist_node($instance, 'Oracle', $info_file, \%stats);
 
 	return 1;

@@ -32,7 +32,7 @@ sub parse {
 	my $alert_log = "${dump_dest}/alert_${db_name}.log";
 	my $info_file = "info/oracle_log__${db_name}";
 	my %stats = ();
-	$stats{alert_log}{$db_name} = $alert_log;
+	$stats{ora_alert_log}{$db_name} = $alert_log;
 	$data_info->regist_node($host, $osname, $info_file, \%stats);
 	return 1;
 }
