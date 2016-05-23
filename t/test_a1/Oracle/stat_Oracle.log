@@ -1,29 +1,46 @@
 schedule:
-  start: 2016/05/23 14:54:30
-  end: 2016/05/23 14:54:46
+  start: 2016/05/23 11:02:25
+  end: 2016/05/23 11:02:56
 jobs:
   - id: 1
     out: (null)
-    cmd: _script_/sprep.sh -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -v 7 -s -n 0
-    start: 2016/05/23 14:54:30
-    end: 2016/05/23 14:54:31
-    pid: 8220
+    cmd: _script_/sprep.sh  -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -v 7 -s -n 0
+    start: 2016/05/23 11:02:25
+    end: 2016/05/23 11:02:28
+    pid: 23956
     rc: 0
   - id: 2
     out: (null)
-    cmd: _script_/chcsv.sh -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -f ora_seg -x
-    start: 2016/05/23 14:54:36
-    end: 2016/05/23 14:54:36
-    pid: 8451
-    rc: 126
-    errormsg: |
-      sh: /home/psadmin/ptune/script/chcsv.sh: 許可がありません
+    cmd: _script_/awrrep.sh -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -v 1
+    start: 2016/05/23 11:02:31
+    end: 2016/05/23 11:02:33
+    pid: 24006
+    rc: 0
   - id: 3
     out: (null)
-    cmd: _script_/chcsv.sh -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -f ora_tbs -x
-    start: 2016/05/23 14:54:41
-    end: 2016/05/23 14:54:41
-    pid: 8464
-    rc: 126
-    errormsg: |
-      sh: /home/psadmin/ptune/script/chcsv.sh: 許可がありません
+    cmd: _script_/chcsv.sh  -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -f ora_sql_topa
+    start: 2016/05/23 11:02:36
+    end: 2016/05/23 11:02:37
+    pid: 24029
+    rc: 0
+  - id: 4
+    out: (null)
+    cmd: _script_/chcsv.sh  -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -f ora_obj_topa
+    start: 2016/05/23 11:02:41
+    end: 2016/05/23 11:02:42
+    pid: 24043
+    rc: 0
+  - id: 5
+    out: (null)
+    cmd: _script_/chcsv.sh -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -f ora_seg
+    start: 2016/05/23 11:02:46
+    end: 2016/05/23 11:02:47
+    pid: 24058
+    rc: 0
+  - id: 6
+    out: (null)
+    cmd: _script_/chcsv.sh -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -f ora_tbs
+    start: 2016/05/23 11:02:51
+    end: 2016/05/23 11:02:55
+    pid: 24072
+    rc: 0

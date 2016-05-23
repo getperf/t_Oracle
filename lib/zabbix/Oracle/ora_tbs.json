@@ -1,0 +1,14 @@
+{
+	"is_physical_device": 0,
+	"host_group": "Oracle",
+	"host_name": "<node>",
+	"host_visible_name": "Oracle - <node_path> <node>",
+	"items": {
+		"tbs.usage": {
+			"item_name": "adm.oracle.tbs.usage.<device>",
+			"type": "zabbix trapper",
+			"key": "adm.oracle.tbs.usage.<device>",
+			"vakue_type": "numeric float"
+		}
+	}
+}

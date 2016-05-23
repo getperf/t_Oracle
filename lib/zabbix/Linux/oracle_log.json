@@ -1,0 +1,13 @@
+{
+	"is_physical_device": 1,
+	"host_group": "Linux Servers",
+	"host_name": "<node>",
+	"items": {
+		"alert_log": {
+			"item_name": "adm.oracle.alert_log[<alert_log.key>]",
+			"type": "zabbix agent",
+			"key": "log[<alert_log.value>]",
+			"vakue_type": "log"
+		}
+	}
+}

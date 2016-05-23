@@ -1,0 +1,57 @@
+{
+  "host_template": "Linux",
+  "host_title": "HW - <node>",
+  "priority": 4,
+  "graphs": [
+    {
+      "graph_template": "HW - Network Recieve Traffic - net_dev - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Network",
+      "graph_title": "HW - <node> - Network Recieve Bytes/sec",
+      "graph_type": "multi",
+      "legend_max": 5,
+      "chart_style": "stack",
+      "graph_items": ["inBytes"],
+      "datasource_title": "HW - <node> - Recieve Bytes/sec"
+    },
+    {
+      "graph_template": "HW - Network Transfer Traffic - net_dev - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Network",
+      "graph_title": "HW - <node> - Network Transfer Bytes/sec",
+      "graph_type": "multi",
+      "legend_max": 5,
+      "chart_style": "stack",
+      "graph_items": ["outBytes"],
+      "datasource_title": "HW - <node> - Transfer Bytes/sec"
+    },
+    {
+      "graph_template": "HW - Network Traffic - net_dev",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "HW - <node> - Network Bytes/sec - <device>",
+      "graph_items": ["inBytes", "outBytes"],
+      "datasource_title": "HW - <node> - Network Bytes/sec - <device>"
+    },
+    {
+      "graph_template": "HW - Network Packet - net_dev",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "HW - <node> - Network Packet - <device>",
+      "graph_items": ["inPackets", "outPackets"],
+      "datasource_title": "HW - <node> - Network Packet - <device>"
+    },
+    {
+      "graph_template": "HW - Network Error - net_dev",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "HW - <node> - Network Error - <device>",
+      "graph_items": ["inErrs", "outErrs"],
+      "chart_style": "line2",
+      "datasource_title": "HW - <node> - Network Error - <device>"
+    },
+    {
+      "graph_template": "HW - Network Drop - net_dev",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "HW - <node> - Network Drop - <device>",
+      "graph_items": ["inDrop", "inFifo", "inFrame", "outDrop", "outFifo", "outColls", "outCarrier"],
+      "chart_style": "line2",
+      "datasource_title": "HW - <node> - Network Drop - <device>"
+    }
+  ]
+}

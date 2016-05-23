@@ -1,0 +1,40 @@
+{
+  "host_template": "Linux",
+  "host_title": "HW - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "HW - CPU Util% - vm",
+      "graph_tree": "/HW/<node_path>/CPU/",
+      "graph_title": "HW - <node> - CPU Util%",
+      "graph_comment": "<issue> <arch> <model> <cores>/<cpus>",
+      "graph_items": ["us", "sy", "wa"],
+      "chart_style": "stack",
+      "datasource_title": "HW - <node> - CPU Util%"
+    },
+    {
+      "graph_template": "HW - CPU RunQue - vm",
+      "graph_tree": "/HW/<node_path>/CPU/RunQue",
+      "graph_title": "HW - <node> - CPU Run Queue",
+      "graph_items": ["r", "b"],
+      "chart_style": "line1",
+      "datasource_title": "HW - <node> - CPU Run Queue"
+    },
+    {
+      "graph_template": "HW - Memory - free",
+      "graph_tree": "/HW/<node_path>/Memory/free",
+      "graph_title": "HW - <node> - Free Memory",
+      "graph_items": ["free"],
+      "chart_style": "stack",
+      "datasource_title": "HW - <node> - Free Memory"
+    },
+    {
+      "graph_template": "HW - Memory - swap rate",
+      "graph_tree": "/HW/<node_path>/Memory/swap",
+      "graph_title": "HW - <node> - Memory Swap Rate",
+      "graph_items": ["si", "so"],
+      "chart_style": "line1",
+      "datasource_title": "HW - <node> - Memory Swap Rate"
+    }
+  ]
+}

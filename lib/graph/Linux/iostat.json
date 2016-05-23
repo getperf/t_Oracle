@@ -1,0 +1,37 @@
+{
+  "host_template": "Linux",
+  "host_title": "HW - <node>",
+  "priority": 3,
+  "graphs": [
+    {
+      "graph_template": "HW - Disk Busy% - <devn> cols",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["pct"],
+      "graph_tree": "/HW/<node_path>/DiskIO/",
+      "graph_title": "HW - <node> - Disk Busy%",
+      "datasource_title": "HW - <node> - Disk Busy% - <device>"
+    },
+    {
+      "graph_template": "HW - Disk IO/sec",
+      "graph_items": ["r_s", "w_s"],
+      "graph_tree": "/HW/<node_path>/DiskIO/<node>/<device>",
+      "graph_title": "HW - <node> - Disk IO/s - <device>",
+      "datasource_title": "HW - <node> - Disk IO/s - <device>"
+    },
+    {
+      "graph_template": "HW - Disk MBs",
+      "graph_items": ["rkb_s", "wkb_s"],
+      "graph_tree": "/HW/<node_path>/DiskIO/<node>/<device>",
+      "graph_title": "HW - <node> - Disk Byte/s - <device>",
+      "datasource_title": "HW - <node> - Disk Byte/s - <device>"
+    },
+    {
+      "graph_template": "HW - Disk Response",
+      "graph_items": ["svctm"],
+      "graph_tree": "/HW/<node_path>/DiskIO/<node>/<device>",
+      "graph_title": "HW - <node> - Disk Response - <device>",
+      "datasource_title": "HW - <node> - Disk Response - <device>"
+    }
+  ]
+}

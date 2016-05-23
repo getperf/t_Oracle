@@ -1,0 +1,24 @@
+{
+  "host_template": "Linux",
+  "host_title": "HW - <node>",
+  "priority": 2,
+  "graphs": [
+    {
+      "graph_template": "HW - Memory Usage - Linux",
+      "graph_tree": "/HW/<node_path>/Memory/",
+      "graph_title": "HW - <node> - Memory Usage",
+      "graph_items": ["used", "shared", "buffers", "cached", "free"],
+      "chart_style": "stack",
+      "graph_comment": "Memory : <total>, Swap : <swap>",
+      "graph_borderline": "<total>",
+      "datasource_title": "HW - <node> - Memory Usage"
+    },
+    {
+      "graph_template": "HW - Memory Detail - Linux",
+      "graph_tree": "/HW/<node_path>/Memory/Detail/",
+      "graph_title": "HW - <node> - Memory Detail",
+      "graph_items": ["used"],
+      "datasource_title": "HW - <node> - Memory Detail"
+    }
+  ]
+}

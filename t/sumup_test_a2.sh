@@ -19,4 +19,4 @@ if [ ! -d $LINUX_DIR ]; then
 	mkdir -p $LINUX_DIR
 fi
 
-sumup -t $SITEHOME/t/test_a1/OracleConfig/ora_param__orcl.txt
+sumup -t $SITEHOME/t/test_a1/Oracle/ora_tbs__orcl.txt

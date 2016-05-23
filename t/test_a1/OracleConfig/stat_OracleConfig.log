@@ -1,13 +1,11 @@
 schedule:
-  start: 2016/05/23 14:54:30
-  end: 2016/05/23 14:54:36
+  start: 2016/05/23 10:52:25
+  end: 2016/05/23 10:52:31
 jobs:
   - id: 1
     out: (null)
     cmd: _script_/chcsv.sh -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -f ora_param
-    start: 2016/05/23 14:54:30
-    end: 2016/05/23 14:54:30
-    pid: 8221
-    rc: 126
-    errormsg: |
-      sh: /home/psadmin/ptune/script/chcsv.sh: 許可がありません
+    start: 2016/05/23 10:52:25
+    end: 2016/05/23 10:52:26
+    pid: 23506
+    rc: 0

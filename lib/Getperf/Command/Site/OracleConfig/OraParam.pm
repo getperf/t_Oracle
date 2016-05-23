@@ -11,47 +11,29 @@ sub new {bless{},+shift}
 sub parse {
     my ($self, $data_info) = @_;
 
-	my %results;
-	my $step = 5;
-#	my @headers = qw/col1 col2 col3/;
-
-	$data_info->step($step);
+	my %infos;
 	my $host = $data_info->host;
-
 	my $osname = $data_info->get_domain_osname();
-	print $osname . "\n";
-
-#　In the case of remote collection, set is_remote to 1.
-#	$data_info->is_remote(1);
-#	my $host   = $data_info->postfix;
-
-	my $sec  = $data_info->start_time_sec->epoch;
-	if (!$sec) {
-		return;
-	}
 	open( my $in, $data_info->input_file ) || die "@!";
-#	$data_info->skip_header( $in );
-	my $is_body = 0;
 	while (my $line = <$in>) {
 		$line=~s/(\r|\n)*//g;			# trim return code
-		if ($line=~/Date:(.*)/) {
-			print "time:$1\n";
+		if ($line=~/Date:(.*)/) {		# parse time: 16/05/23 14:56:52
+			my $sec = localtime(Time::Piece->strptime($1, '%y/%m/%d %H:%M:%S'))->epoch;
 			next;
 		}
 		my ($name, $value) = split(/\s*\|\s*/, $line);
 		next if (!defined($name) || $name eq 'NAME');
-		print "|$name|$value|\n";
-
-		$results{$sec} = $line;
-		$sec += $step;
+		$infos{$name} = $value;
 	}
 	close($in);
-#	$data_info->regist_metric($host, 'OracleConfig', 'ora_param', \@headers);
 
-	my $output = "ora_param.txt";						# Local collection
-#	my $output = "OracleConfig/${host}/ora_param.txt";	# Remote collection
-
-#	$data_info->simple_report('ora_param.txt', \%results, \@headers);
+	my $dump_dest = $infos{background_dump_dest};
+	my $db_name   = $infos{db_name};
+	my $alert_log = "${dump_dest}/alert_${db_name}.log";
+	my $info_file = "info/oracle_log__${db_name}";
+	my %stats = ();
+	$stats{alert_log}{$db_name} = $alert_log;
+	$data_info->regist_node($host, $osname, $info_file, \%stats);
 	return 1;
 }
 

@@ -1,0 +1,17 @@
+{
+  "host_template": "Linux",
+  "host_title": "HW - <node>",
+  "priority": 5,
+  "graphs": [
+    {
+      "graph_template": "HW - Disk Util% - <devn> cols",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["usage"],
+      "chart_style": "line2",
+      "graph_tree": "/HW/<node_path>/DiskUtil/",
+      "graph_title": "HW - <node> - Disk Util%",
+      "datasource_title": "HW - <node> - Disk Util% - <device>"
+    }
+  ]
+}

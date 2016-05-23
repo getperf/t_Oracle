@@ -1,0 +1,14 @@
+{
+  "host_template": "Linux",
+  "host_title": "HW - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "HW - CPU Load Average",
+      "graph_tree": "/HW/<node_path>/CPU/Load",
+      "graph_items": ["load1m","load5m","load15m"],
+      "graph_title": "HW - <node> - CPU Load Average",
+      "datasource_title": "HW - <node> - CPU Load Average"
+    }
+  ]
+}
