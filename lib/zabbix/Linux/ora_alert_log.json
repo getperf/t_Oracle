@@ -1,10 +1,8 @@
-{
-	"items": [
-		{
-			"item_name": "adm.oracle.alert_log[<device.key>]",
-			"type": "zabbix agent",
-			"key": "log[<device.value>]",
-			"vakue_type": "log"
-		}
-	]
-}
+[
+	{
+		"item_name": "adm.oracle.alert_log[<device.key>]",
+		"type": "zabbix agent",
+		"key": "log[<device.value>]",
+		"vakue_type": "log"
+	}
+]

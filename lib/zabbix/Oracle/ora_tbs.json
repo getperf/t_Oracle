@@ -1,10 +1,8 @@
-{
-	"items": [
-		{
-			"item_name": "adm.oracle.tbs.usage.<device>",
-			"type": "zabbix trapper",
-			"key": "adm.oracle.tbs.usage.<device>",
-			"vakue_type": "numeric float"
-		}
-	]
-}
+[
+	{
+		"item_name": "adm.oracle.tbs.usage.<device>",
+		"type": "zabbix trapper",
+		"key": "adm.oracle.tbs.usage.<device>",
+		"vakue_type": "numeric float"
+	}
+]
