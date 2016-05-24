@@ -2,6 +2,6 @@
 	"is_physical_device" : 1,
 	"host_group" : "Linux Servers",
 	"host_name" : "<node>",
-	"host_visible_name" : "Linux - <node_path> <node>",
+	"host_visible_name" : "Linux - <node>",
 	"templates" : [ "Template OS Linux" ]
 }
