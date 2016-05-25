@@ -8,7 +8,7 @@
       "graph_type": "multi",
       "legend_max": 15,
       "graph_items": ["mbyte"],
-      "graph_tree": "/Oracle/<node_path>/Segment/",
+      "graph_tree": "/Oracle/<node_path>/Segment/Etc",
       "graph_title": "Oracle - <node> - Segment Size - Etc",
       "datasource_title": "Oracle - <node> - Segment Size - Etc - <device>"
     }

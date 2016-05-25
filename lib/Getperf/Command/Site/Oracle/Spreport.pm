@@ -152,23 +152,23 @@ sub parse {
 	my $host = $data_info->file_suffix;
 	{
 		my @header = keys %{$headers->{load_profiles}};
-		my $output  = "Oracle/${host}/oraload.txt";
+		my $output  = "Oracle/${host}/ora_load.txt";
 		my %data    = ($sec => \%loadprof);
-		$data_info->regist_metric($host, 'Oracle', 'oraload', \@header);
+		$data_info->regist_metric($host, 'Oracle', 'ora_load', \@header);
 		$data_info->pivot_report($output, \%data, \@header);
 	}
 	{
 		my @header = keys %{$headers->{hits}};
-		my $output  = "Oracle/${host}/orahit.txt";
+		my $output  = "Oracle/${host}/ora_hit.txt";
 		my %data    = ($sec => \%hit);
-		$data_info->regist_metric($host, 'Oracle', 'orahit', \@header);
+		$data_info->regist_metric($host, 'Oracle', 'ora_hit', \@header);
 		$data_info->pivot_report($output, \%data, \@header);
 	}
 	{
 		my @header = keys %{$headers->{events}};
-		my $output  = "Oracle/${host}/oraevent.txt";
+		my $output  = "Oracle/${host}/ora_event.txt";
 		my %data    = ($sec => \%event);
-		$data_info->regist_metric($host, 'Oracle', 'oraevent', \@header);
+		$data_info->regist_metric($host, 'Oracle', 'ora_event', \@header);
 		$data_info->pivot_report($output, \%data, \@header);
 	}
 

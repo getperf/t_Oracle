@@ -1,4 +1,4 @@
-package Getperf::Command::Site::Oracle::Oraseg;
+package Getperf::Command::Site::Oracle::OraSeg;
 use strict;
 use warnings;
 use Data::Dumper;
@@ -22,10 +22,12 @@ sub parse {
 	while (my $line = <IN>) {
 		next if ($line=~/^Date:/);	# skip header
 		$line=~s/(\r|\n)*//g;			# trim return code
-		my ($user, $type, @csvs) = split(' ', $line);
+		my ($user, $type, @csvs) = split(/\s*\|\s*/, $line);
+		next if (!defined($user) || $user eq 'USERNAME');
 		my $tablespace = pop(@csvs);
 		my $mbyte      = pop(@csvs);
 		$type = 'ETC'  if ($type!~/^(TABLE|INDEX)$/);
+		$type = lc $type;
 		$user = 'MISC' if ($user=~/^(EXFSYS|SYSTEM|SYS|OUTLN|XDB|WMSYS|APPQOSSYS|DBSNMP)$/);
 		my $device = $type . '|' . $user;
 		$results{$device}{$sec} += $mbyte;
@@ -33,9 +35,9 @@ sub parse {
 	close(IN);
 	for my $device(keys %results) {
 		my ($type, $user) = split(/\|/, $device);
-		my $output = "Oracle/${host}/device/oraseg${type}__${user}.txt";
+		my $output = "Oracle/${host}/device/ora_seg_${type}__${user}.txt";
 		my $data   = $results{$device};
-		$data_info->regist_device($host, 'Oracle', "oraseg${type}", $user, $user, \@headers);
+		$data_info->regist_device($host, 'Oracle', "ora_seg_${type}", $user, $user, \@headers);
 		$data_info->simple_report($output, $data, \@headers);
 	}
 	return 1;

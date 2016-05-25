@@ -18,9 +18,9 @@ export GRADATION_10="--color-scheme $COLOR_CONFIG/gradation3.json --color-style 
 export GRADATION_16="--color-scheme $COLOR_CONFIG/gradation2.json --color-style gradation"
 export GRADATION_30="--color-scheme $COLOR_CONFIG/gradation.json  --color-style gradation"
 
-cacti-cli -f -g $GRAPH_CONFIG/Oracle/oraevent.json
-cacti-cli -f -g $GRAPH_CONFIG/Oracle/orahit.json
-cacti-cli -f -g $GRAPH_CONFIG/Oracle/oraload.json
-cacti-cli -f -g $GRAPH_CONFIG/Oracle/orasegETC.json
-cacti-cli -f -g $GRAPH_CONFIG/Oracle/orasegINDEX.json
-cacti-cli -f -g $GRAPH_CONFIG/Oracle/orasegTABLE.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_event.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_hit.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_load.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_seg_etc.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_seg_index.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_seg_table.json

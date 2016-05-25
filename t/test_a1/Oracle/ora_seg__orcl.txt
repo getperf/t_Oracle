@@ -1,12 +1,12 @@
-Date:16/05/23 11:02:47
+Date:16/05/26 05:49:16
 
 USERNAME                                                                                                                        |SEGMENT_TYPE      |    MBYTES|TABLESPACE_NAME
 APEX_040200                                                                                                                     |INDEX             |    63.375|SYSAUX
 APEX_040200                                                                                                                     |LOBINDEX          |      5.25|SYSAUX
-APEX_040200                                                                                                                     |LOBSEGMENT        |   77.6875|SYSAUX
+APEX_040200                                                                                                                     |LOBSEGMENT        |   79.5625|SYSAUX
 APEX_040200                                                                                                                     |TABLE             |   100.375|SYSAUX
 AUDSYS                                                                                                                          |INDEX PARTITION   |       .25|SYSAUX
-AUDSYS                                                                                                                          |LOB PARTITION     |      .125|SYSAUX
+AUDSYS                                                                                                                          |LOB PARTITION     |    1.1875|SYSAUX
 AUDSYS                                                                                                                          |TABLE PARTITION   |     .0625|SYSAUX
 CTXSYS                                                                                                                          |INDEX             |     2.375|SYSAUX
 CTXSYS                                                                                                                          |LOBINDEX          |      .125|SYSAUX
@@ -25,7 +25,7 @@ LBACSYS                                                                         
 LBACSYS                                                                                                                         |TABLE             |       .25|SYSTEM
 MDSYS                                                                                                                           |INDEX             |    6.6875|SYSAUX
 MDSYS                                                                                                                           |LOBINDEX          |     5.875|SYSAUX
-MDSYS                                                                                                                           |LOBSEGMENT        |   62.9375|SYSAUX
+MDSYS                                                                                                                           |LOBSEGMENT        |   64.9375|SYSAUX
 MDSYS                                                                                                                           |NESTED TABLE      |       .75|SYSAUX
 MDSYS                                                                                                                           |TABLE             |      15.5|SYSAUX
 OJVMSYS                                                                                                                         |INDEX             |     .1875|USERS
@@ -41,29 +41,29 @@ OUTLN                                                                           
 OUTLN                                                                                                                           |LOBINDEX          |     .0625|SYSTEM
 OUTLN                                                                                                                           |LOBSEGMENT        |     .0625|SYSTEM
 OUTLN                                                                                                                           |TABLE             |     .1875|SYSTEM
-PERFSTAT                                                                                                                        |INDEX             |    60.375|USERS
-PERFSTAT                                                                                                                        |TABLE             |    72.375|USERS
+PERFSTAT                                                                                                                        |INDEX             |   246.375|USERS
+PERFSTAT                                                                                                                        |TABLE             |   235.375|USERS
 SCOTT                                                                                                                           |INDEX             |      .125|USERS
 SCOTT                                                                                                                           |TABLE             |     .1875|USERS
-SYS                                                                                                                             |CLUSTER           |         2|SYSAUX
-SYS                                                                                                                             |CLUSTER           |     60.25|SYSTEM
-SYS                                                                                                                             |INDEX             |   62.9375|SYSAUX
-SYS                                                                                                                             |INDEX             |   156.375|SYSTEM
-SYS                                                                                                                             |INDEX PARTITION   |      34.5|SYSAUX
-SYS                                                                                                                             |LOB PARTITION     |    6.9375|SYSAUX
+SYS                                                                                                                             |CLUSTER           |         3|SYSAUX
+SYS                                                                                                                             |CLUSTER           |     61.25|SYSTEM
+SYS                                                                                                                             |INDEX             |    81.125|SYSAUX
+SYS                                                                                                                             |INDEX             |   157.375|SYSTEM
+SYS                                                                                                                             |INDEX PARTITION   |     53.75|SYSAUX
+SYS                                                                                                                             |LOB PARTITION     |     5.125|SYSAUX
 SYS                                                                                                                             |LOBINDEX          |     4.875|SYSAUX
 SYS                                                                                                                             |LOBINDEX          |    6.8125|SYSTEM
-SYS                                                                                                                             |LOBSEGMENT        |  102.4375|SYSAUX
+SYS                                                                                                                             |LOBSEGMENT        |  123.4375|SYSAUX
 SYS                                                                                                                             |LOBSEGMENT        |   20.1875|SYSTEM
 SYS                                                                                                                             |NESTED TABLE      |      .625|SYSTEM
 SYS                                                                                                                             |ROLLBACK          |     .4375|SYSTEM
 SYS                                                                                                                             |SYSTEM STATISTICS |         8|SYSAUX
-SYS                                                                                                                             |TABLE             |    44.875|SYSAUX
+SYS                                                                                                                             |TABLE             |    61.875|SYSAUX
 SYS                                                                                                                             |TABLE             |     529.5|SYSTEM
-SYS                                                                                                                             |TABLE PARTITION   |    44.875|SYSAUX
+SYS                                                                                                                             |TABLE PARTITION   |        68|SYSAUX
 SYS                                                                                                                             |TABLE PARTITION   |      6.25|SYSTEM
 SYS                                                                                                                             |TABLE SUBPARTITION|         2|SYSAUX
-SYS                                                                                                                             |TYPE2 UNDO        |     26.25|UNDOTBS1
+SYS                                                                                                                             |TYPE2 UNDO        |     19.25|UNDOTBS1
 SYSTEM                                                                                                                          |INDEX             |    1.6875|SYSAUX
 SYSTEM                                                                                                                          |INDEX             |     8.625|SYSTEM
 SYSTEM                                                                                                                          |INDEX PARTITION   |    4.1875|SYSAUX
