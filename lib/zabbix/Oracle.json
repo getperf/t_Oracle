@@ -1,6 +1,6 @@
 {
 	"is_physical_device" : 0,
-	"host_group" : "Oracle",
+	"host_groups" : [ "Oracle" ],
 	"host_name" : "<node>",
 	"host_visible_name" : "Oracle - <node>",
 	"templates" : [ "Template Oracle" ]

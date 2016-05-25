@@ -1,8 +1,9 @@
 [
 	{
 		"item_name": "adm.oracle.tbs.usage.<device>",
-		"type": "zabbix trapper",
+		"type": "Zabbix trapper",
 		"key": "adm.oracle.tbs.usage.<device>",
-		"vakue_type": "numeric float"
+		"value_type": "numeric float",
+		"delay": 3600
 	}
 ]

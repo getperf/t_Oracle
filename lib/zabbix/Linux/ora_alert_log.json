@@ -1,8 +1,9 @@
 [
 	{
 		"item_name": "adm.oracle.alert_log[<device.key>]",
-		"type": "zabbix agent",
+		"type": "Zabbix agent",
 		"key": "log[<device.value>]",
-		"vakue_type": "log"
+		"value_type": "log",
+		"delay": 300
 	}
 ]
