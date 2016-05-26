@@ -6,6 +6,7 @@
     {
       "graph_template": "Oracle - Efficiency",
       "graph_tree": "/Oracle/<node_path>/Efficiency",
+      "graph_title": "Oracle - <node> - Efficiency",
       "chart_style": "line1",
       "legend_type": "show_average",
       "graph_item_cols": 3,
@@ -33,7 +34,9 @@
         "Parse CPU to Parse %",
         "% Non-Parse CPU"
       ],
-      "graph_title": "Oracle - <node> - Efficiency",
+      "vertical_label": "hit %",
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
       "datasource_title": "Oracle - <node> - Efficiency"
     }
   ]

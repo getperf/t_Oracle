@@ -81,6 +81,7 @@ Oracleテンプレートのインポート
 監視サイト上で以下のコマンドを用いてインポートします
 
 	cd {モニタリングサイトホーム}
+	mkdir -p $GETPERF_HOME/var/template/archive/
 	sumup --import=Oracle --archive=$GETPERF_HOME/var/template/archive/config-Oracle.tar.gz
 
 Cacti グラフテンプレートをインポートします。
@@ -120,6 +121,10 @@ AWR レポートを使用する場合は上記作業は不要です。
 ArrayFort の場合、以下のエージェント採取設定ファイルを監視対象サーバにコピーして、エージェントを再起動してください。
 
 	{サイトホーム}/lib/agent/Oracle/conf/Oracle.ini
+
+script/hastat.pl スクリプトの編集
+
+
 
 SC3000 の場合、監視対象サーバから直接採取する場合と、リモートで採取する場合で実行オプションの変更が必要になります。
 

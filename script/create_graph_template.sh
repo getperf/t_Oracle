@@ -21,6 +21,9 @@ export GRADATION_30="--color-scheme $COLOR_CONFIG/gradation.json  --color-style 
 cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_event.json
 cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_hit.json
 cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_load.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_tbs.json
 cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_seg_etc.json
 cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_seg_index.json
 cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_seg_table.json
+
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_sql_top.json

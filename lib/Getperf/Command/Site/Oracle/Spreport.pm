@@ -137,7 +137,7 @@ sub parse {
 	if ($tm_str=~/(\d\d)-\s*(.*?)\s*-(\d\d) (\d\d):(\d\d):(\d\d)/) {
 		my ($DD, $MM, $YY, $hh, $mm, $ss) = ($1, $2, $3, $4, $5, $6);
 		if (defined($months->{$MM})) {
-			$MM  = $months->{$MM} ;
+			$MM  = $months->{$MM} - 1;
 			$sec = timelocal($ss, $mm, $hh, $DD, $MM, $YY-1900+2000);
 		}
 	}

@@ -43,6 +43,8 @@
         "free buffer",
         "read by other session"
       ],
+      "vertical_label": "sec",
+      "unit_exponent_value": 1,
       "graph_title": "Oracle - <node> - Event",
       "datasource_title": "Oracle - <node> - Event"
     }

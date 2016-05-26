@@ -1,0 +1,40 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 8,
+  "graphs": [
+    {
+      "graph_template": "Oracle - SQL CPU Time Ranking - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/SQL/CPU",
+      "graph_title": "Oracle - <node> - SQL CPU Time Ranking",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["cpu_time"],
+      "unit_exponent_value": 1,
+      "vertical_label": "sec",
+      "datasource_title": "Oracle - <node> - SQL CPU Time Ranking - <device>"
+    },
+    {
+      "graph_template": "Oracle - SQL Buffer Get Ranking - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/SQL/Buffer",
+      "graph_title": "Oracle - <node> - SQL Buffer Get Ranking",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["buffer_gets"],
+      "unit_exponent_value": 1,
+      "vertical_label": "block/sec",
+      "datasource_title": "Oracle - <node> - SQL Buffer Get Ranking - <device>"
+    },
+    {
+      "graph_template": "Oracle - SQL Disk Read Ranking - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/SQL/Disk",
+      "graph_title": "Oracle - <node> - SQL Disk Read Ranking",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["disk_reads"],
+      "unit_exponent_value": 1,
+      "vertical_label": "block/sec",
+      "datasource_title": "Oracle - <node> - SQL Disk Read Ranking - <device>"
+    }
+  ]
+}
