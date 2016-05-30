@@ -11,7 +11,7 @@ sub new {bless{},+shift}
 sub parse {
     my ($self, $data_info) = @_;
 
-	my %results;
+	my (%results, %zabbix_send_data);
 	my $step = 3600;
 	my @headers = qw/total_mb used_mb usage available_mb/;
 
@@ -30,12 +30,13 @@ sub parse {
 			$sec = localtime(Time::Piece->strptime($1, '%y/%m/%d %H:%M:%S'))->epoch;
 			next;
 		}
-		my ($name, @values) = split(/\s*\|\s*/, $line);
-		next if (!defined($name) || $name eq 'TABLESPACE_NAME');
-		$results{$name}{$sec} = join(' ', @values);
+		my ($tbs, @values) = split(/\s*\|\s*/, $line);
+		next if (!defined($tbs) || $tbs eq 'TABLESPACE_NAME');
+		$results{$tbs}{$sec} = join(' ', @values);
+		my $zabbix_item = "adm.oracle.tbs.usage." . $tbs;
+		$zabbix_send_data{$sec}{$zabbix_item} = $values[2];
 	}
 	close($in);
-
 	for my $tbs(keys %results) {
 		$data_info->regist_device($instance, 'Oracle', 'ora_tbs', $tbs, undef, \@headers);
 		my $output = "Oracle/${instance}/device/ora_tbs__${tbs}.txt";	# Remote collection
@@ -47,6 +48,7 @@ sub parse {
 	$stats{ora_tbs} = \@tablespaces;
 	my $info_file = "info/ora_tbs__${instance}";
 	$data_info->regist_node($instance, 'Oracle', $info_file, \%stats);
+	$data_info->report_zabbix_send_data($instance, \%zabbix_send_data);
 
 	return 1;
 }

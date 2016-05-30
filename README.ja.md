@@ -72,6 +72,7 @@ Cacti グラフテンプレートをファイルにエクスポートします
 
 集計スクリプト、グラフ登録ルール、Cactiグラフテンプレートエクスポートファイル一式をアーカイブします
 
+	mkdir -p $GETPERF_HOME/var/template/archive/
 	sumup --export=Oracle --archive=$GETPERF_HOME/var/template/archive/config-Oracle.tar.gz
 
 Oracleテンプレートのインポート
@@ -81,8 +82,7 @@ Oracleテンプレートのインポート
 監視サイト上で以下のコマンドを用いてインポートします
 
 	cd {モニタリングサイトホーム}
-	mkdir -p $GETPERF_HOME/var/template/archive/
-	sumup --import=Oracle --archive=$GETPERF_HOME/var/template/archive/config-Oracle.tar.gz
+	tar xvf $GETPERF_HOME/var/template/archive/config-Oracle.tar.gz
 
 Cacti グラフテンプレートをインポートします。
 
@@ -122,13 +122,20 @@ ArrayFort の場合、以下のエージェント採取設定ファイルを監�
 
 	{サイトホーム}/lib/agent/Oracle/conf/Oracle.ini
 
-script/hastat.pl スクリプトの編集
+サーバで Oracle インスタンスが稼働しているかチェックするスクリプト hastat.pl を編集します。
+HA構成のサーバの場合、本スクリプトを実行して稼働系のサーバのみ情報採取をする様に事前チェックを行います。
 
+	vi ~/ptune/script/hastat.pl
 
+サービスIP
+
+	my %services = (
+	        '192.168.10.2' => 'orcl',
+	);
 
 SC3000 の場合、監視対象サーバから直接採取する場合と、リモートで採取する場合で実行オプションの変更が必要になります。
 
-	vi {サイトホーム}/lib/agent/Oracle/conf/SC3000.ini
+	vi ~/ptune/conf/Oracle.ini
 
 以下例はリモート採取の設定となります。
 
