@@ -1,7 +1,7 @@
-Oracle モニタリングテンプレート
+Nimble Storage モニタリングテンプレート
 ===============================================
 
-Oracle モニタリング
+Nimble Storage モニタリング
 -------------
 
 以下の監視対象に対して東芝ストレージサポートユーティリティ付属の、tsuacsコマンド(ArrayFort の場合は aeuacs)を
@@ -13,39 +13,26 @@ Oracle モニタリング
 
 テンプレートに必要な設定ファイルは以下の通りです。
 
-|           ディレクトリ           |        ファイル名        |                  用途                 |      備考      |
-|----------------------------------|--------------------------|---------------------------------------|----------------|
-| lib/agent/Oracle/conf/           | iniファイル              | エージェント採取設定ファイル          |                |
-| lib/agent/Oracle/script/         | 採取スクリプト           | エージェント採取スクリプト            |                |
-| lib/Getperf/Command/Site/Oracle/ | pmファイル               | データ集計スクリプト                  |                |
-| lib/graph/Oracle/                | jsonファイル             | グラフテンプレート登録ルール          | カスタマイズ用 |
-| lib/cacti/template/0.8.8g/       | xmlファイル              | Cactiテンプレートエクスポートファイル |                |
-| script/                          | create_graph_template.sh | グラフテンプレート登録スクリプト      | ArrayFort用    |
+|           ディレクトリ           |        ファイル名        |                  用途                 |
+|----------------------------------|--------------------------|---------------------------------------|
+| lib/agent/Oracle/conf/           | iniファイル              | エージェント採取設定ファイル          |
+| lib/agent/Oracle/script/         | 採取スクリプト           | エージェント採取スクリプト            |
+| lib/Getperf/Command/Site/Oracle/ | pmファイル               | データ集計スクリプト                  |
+| lib/graph/Oracle/                | jsonファイル             | グラフテンプレート登録ルール          |
+| lib/cacti/template/0.8.8g/       | xmlファイル              | Cactiテンプレートエクスポートファイル |
+| script/                          | create_graph_template.sh | グラフテンプレート登録スクリプト      |
 
-Oracle モニタリング仕様
+Nimble Storage モニタリング仕様
 -----------------------
 
-|        監視項目        | 間隔(規定値) |                                        定義                                        |
-|------------------------|--------------|------------------------------------------------------------------------------------|
-| Statspack レポート     | 60分         | Oracle Statspack　のスナップショット採取とレポートを実行します                     |
-| AWR レポート           | 60分         | Statspack を使用せずに AWR を用いてDB統計を抽出します                              |
-| SQL ランキング         | 60分         | スナップショット結果からSQL負荷の高い順のランキング情報を採取します                |
-| オブジェクトランキング | 60分         | スナップショット結果からオブジェクトアクセス量の高い順のランキング情報を採取します |
-| 表領域使用率           | 60分         | 表領域使用率を採取します                                                           |
-| セグメントサイズ使用率 | 60分         | ユーザオブジェクト(表、索引など)の使用率を採取します                               |
-| アラートログ           | -            | Zabbix エージェントで Oralce アラートログのログ監視をします                        |
-
-**注意事項**
-
-* AWRレポートを使用する場合は、別途Oracleライセンスが必要になります。リリースのマニュアルにある『ライセンス情報』を参照してください
-* Statspack を使用する場合は、事前に Statspack パッケージのインストールが必要になります
-* 表領域使用率は Zabbix と連携して閾値監視をします
-* アラートログも Zabbix と連携してログ監視をします。別途、監視対象サーバに Zabbix エージェントが必要です
-* Zabbix 連携についての詳細は Getperf マニュアルを参照してください
+|     監視項目    | 間隔(規定値) |                              定義                             |
+|-----------------|--------------|---------------------------------------------------------------|
+| Global I/O 統計 | 30秒         | Nimble Storage 用 SNMP 統計(コントローラ用)を採取します       |
+| Volume I/O 統計 | 30秒         | Nimble Storage 用 SNMP 統計(ディスクボリューム用)を採取します |
 
 **リファレンス**
 
-* [STATSPACKのインストールと使用](http://d.hatena.ne.jp/incarose86/20111010/1318243244)
+* [Nimble OS SNMP Reference Guide](https://static.spiceworks.com/attachments/post/0007/3827/nimble_os_snmp_reference_guide.pdf)
 
 Install
 =====
@@ -59,7 +46,7 @@ Git Hub からプロジェクトをクローンします
 
 プロジェクトディレクトリに移動して、--template オプション付きでサイトの初期化をします
 
-	cd t_Oracle
+	cd t_Nimble
 	initsite --template .
 
 Cacti グラフテンプレート作成スクリプトを順に実行します
@@ -68,25 +55,25 @@ Cacti グラフテンプレート作成スクリプトを順に実行します
 
 Cacti グラフテンプレートをファイルにエクスポートします
 
-	cacti-cli --export Oracle
+	cacti-cli --export Nimble
 
 集計スクリプト、グラフ登録ルール、Cactiグラフテンプレートエクスポートファイル一式をアーカイブします
 
-	sumup --export=Oracle --archive=$GETPERF_HOME/var/template/archive/config-Oracle.tar.gz
+	mkdir -p $GETPERF_HOME/var/template/archive/
+	sumup --export=Nimble --archive=$GETPERF_HOME/var/template/archive/config-Nimble.tar.gz
 
-Oracleテンプレートのインポート
+Nimbleテンプレートのインポート
 ---------------------
 
-前述で作成した $GETPERF_HOME/var/template/archive/config-Oracle.tar.gz がOracleテンプレートのアーカイブとなり、
+前述で作成した $GETPERF_HOME/var/template/archive/config-Nimble.tar.gz がNimbleテンプレートのアーカイブとなり、
 監視サイト上で以下のコマンドを用いてインポートします
 
 	cd {モニタリングサイトホーム}
-	mkdir -p $GETPERF_HOME/var/template/archive/
-	sumup --import=Oracle --archive=$GETPERF_HOME/var/template/archive/config-Oracle.tar.gz
+	tar xvf $GETPERF_HOME/var/template/archive/config-Nimble.tar.gz
 
 Cacti グラフテンプレートをインポートします。
 
-	cacti-cli --import Oracle
+	cacti-cli --import Nimble
 
 インポートした集計スクリプトを反映するため、集計デーモンを再起動します
 
