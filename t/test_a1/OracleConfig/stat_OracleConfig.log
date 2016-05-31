@@ -1,11 +1,11 @@
 schedule:
-  start: 2016/05/23 10:52:25
-  end: 2016/05/23 10:52:31
+  start: 2016/05/31 13:45:25
+  end: 2016/05/31 13:45:31
 jobs:
   - id: 1
     out: (null)
     cmd: _script_/chcsv.sh -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -f ora_param
-    start: 2016/05/23 10:52:25
-    end: 2016/05/23 10:52:26
-    pid: 23506
+    start: 2016/05/31 13:45:25
+    end: 2016/05/31 13:45:25
+    pid: 5511
     rc: 0

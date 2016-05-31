@@ -1,4 +1,4 @@
-Date:16/05/23 10:52:25
+Date:16/05/31 13:45:25
 
 NAME                                                                            |VALUE
 lock_name_space                                                                 |
@@ -382,3 +382,14 @@ pdb_file_name_convert                                                           
 noncdb_compatible                                                               |FALSE
 common_user_prefix                                                              |C##
 exclude_seed_cdb_view                                                           |TRUE
+Diag Enabled                                                                    |TRUE
+ADR Base                                                                        |/u01/app/oracle
+ADR Home                                                                        |/u01/app/oracle/diag/rdbms/orcl/orcl
+Diag Trace                                                                      |/u01/app/oracle/diag/rdbms/orcl/orcl/trace
+Diag Alert                                                                      |/u01/app/oracle/diag/rdbms/orcl/orcl/alert
+Diag Incident                                                                   |/u01/app/oracle/diag/rdbms/orcl/orcl/incident
+Diag Cdump                                                                      |/u01/app/oracle/diag/rdbms/orcl/orcl/cdump
+Health Monitor                                                                  |/u01/app/oracle/diag/rdbms/orcl/orcl/hm
+Default Trace File                                                              |/u01/app/oracle/diag/rdbms/orcl/orcl/trace/orcl_ora_5522.trc
+Active Problem Count                                                            |Unavailable
+Active Incident Count                                                           |Unavailable

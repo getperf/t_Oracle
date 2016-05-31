@@ -27,8 +27,8 @@ sub parse {
 	}
 	close($in);
 
-	my $dump_dest = $infos{background_dump_dest};
-	my $db_name   = $infos{db_name};
+	my $dump_dest = $infos{'Diag Trace'};
+	my $db_name   = $infos{instance_name};
 	my $alert_log = "${dump_dest}/alert_${db_name}.log";
 	my $info_file = "info/oracle_log__${db_name}";
 	my %stats = ();
