@@ -17,10 +17,6 @@ sub parse {
 	open( my $in, $data_info->input_file ) || die "@!";
 	while (my $line = <$in>) {
 		$line=~s/(\r|\n)*//g;			# trim return code
-		if ($line=~/Date:(.*)/) {		# parse time: 16/05/23 14:56:52
-			my $sec = localtime(Time::Piece->strptime($1, '%y/%m/%d %H:%M:%S'))->epoch;
-			next;
-		}
 		my ($name, $value) = split(/\s*\|\s*/, $line);
 		next if (!defined($name) || $name eq 'NAME');
 		$infos{$name} = $value;
@@ -28,11 +24,11 @@ sub parse {
 	close($in);
 
 	my $dump_dest = $infos{'Diag Trace'};
-	my $db_name   = $infos{instance_name};
-	my $alert_log = "${dump_dest}/alert_${db_name}.log";
-	my $info_file = "info/oracle_log__${db_name}";
+	my $db   = $infos{instance_name};
+	my $alert_log = "${dump_dest}/alert_${db}.log";
+	my $info_file = "info/oracle_log__${db}";
 	my %stats = ();
-	$stats{ora_alert_log}{$db_name} = $alert_log;
+	$stats{ora_alert_log}{$db} = $alert_log;
 	$data_info->regist_node($host, $osname, $info_file, \%stats);
 	return 1;
 }
