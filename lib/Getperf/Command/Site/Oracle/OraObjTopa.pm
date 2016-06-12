@@ -113,6 +113,7 @@ sub parse {
 			$rank ++;
 			last if ($n_top < $rank);
 		}
+		print Dumper \@obj_rank_top_n; exit;
 		$rank = 1;
 		my $graph_header = $graph_headers{$sort_key};
 		for my $graph_title_suffix('', ' - 2', ' - 3', ' - 4') {

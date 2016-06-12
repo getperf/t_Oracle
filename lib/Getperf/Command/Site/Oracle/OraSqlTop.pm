@@ -101,17 +101,30 @@ sub parse {
 		"    AND g.title_cache = '__graph_title__' " .
 		"ORDER BY gi.sequence";
 
+	my %registered_sql_hash = ();
 	for my $sort_key(qw/cpu_time buffer_gets disk_reads/) {
 		my @sql_ranks = sort { $sql_stats{$b}{$sort_key} <=> $sql_stats{$a}{$sort_key} } keys %sql_stats;
 		my $rank = 1;
 		for my $sql_hash(@sql_ranks) {
+			next if (defined($registered_sql_hash{$sql_hash}));
 			$data_info->regist_device($instance, 'Oracle', 'ora_sql_top', $sql_hash, undef, \@headers);
 			my $output = "Oracle/${instance}/device/ora_sql_top__${sql_hash}.txt";
 			$data_info->pivot_report($output, $results{$sql_hash}, \@headers);
 			$rank ++;
+			$registered_sql_hash{$sql_hash} = 1;
 			last if ($n_top < $rank);
 		}
-		$rank = 1;
+		my $ranks_n = scalar(@sql_ranks);
+		my @sql_ranks_top_n;
+		if ($ranks_n < $n_top) {
+			@sql_ranks_top_n = (@sql_ranks, ('dummy') x ($n_top - $ranks_n));
+		} else {
+			@sql_ranks_top_n = @sql_ranks[0..$n_top-1];
+		}
+		$data_info->regist_devices_alias($instance, 'Oracle', 'ora_sql_top',
+		                                 'ora_sql_top_by_' . $sort_key,
+		                                 \@sql_ranks_top_n, undef);
+
 		my $graph_header = $graph_headers{$sort_key};
 		for my $graph_title_suffix('', ' - 2', ' - 3', ' - 4') {
 			my $graph_title = "Oracle - ${instance} - " . $graph_header . $graph_title_suffix;
