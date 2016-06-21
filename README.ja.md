@@ -1,7 +1,7 @@
-Nimble Storage モニタリングテンプレート
+Oracle モニタリングテンプレート
 ===============================================
 
-Nimble Storage モニタリング
+Oracle モニタリング
 -------------
 
 以下の監視対象に対して東芝ストレージサポートユーティリティ付属の、tsuacsコマンド(ArrayFort の場合は aeuacs)を
@@ -22,12 +22,12 @@ Nimble Storage モニタリング
 | lib/cacti/template/0.8.8g/       | xmlファイル              | Cactiテンプレートエクスポートファイル |
 | script/                          | create_graph_template.sh | グラフテンプレート登録スクリプト      |
 
-Nimble Storage モニタリング仕様
+Oracle モニタリング仕様
 -----------------------
 
 |     監視項目    | 間隔(規定値) |                              定義                             |
 |-----------------|--------------|---------------------------------------------------------------|
-| Global I/O 統計 | 30秒         | Nimble Storage 用 SNMP 統計(コントローラ用)を採取します       |
+| Global I/O 統計 | 1時間        | Nimble Storage 用 SNMP 統計(コントローラ用)を採取します       |
 | Volume I/O 統計 | 30秒         | Nimble Storage 用 SNMP 統計(ディスクボリューム用)を採取します |
 
 **リファレンス**
@@ -37,7 +37,7 @@ Nimble Storage モニタリング仕様
 Install
 =====
 
-Oracleテンプレートのビルド
+テンプレートのビルド
 -------------------
 
 Git Hub からプロジェクトをクローンします
@@ -46,23 +46,23 @@ Git Hub からプロジェクトをクローンします
 
 プロジェクトディレクトリに移動して、--template オプション付きでサイトの初期化をします
 
-	cd t_Nimble
+	cd t_Oracle
 	initsite --template .
 
 Cacti グラフテンプレート作成スクリプトを順に実行します
 
-	./script/create_graph_template.sh
+	./script/create_graph_template__oracle.sh
 
 Cacti グラフテンプレートをファイルにエクスポートします
 
-	cacti-cli --export Nimble
+	cacti-cli --export Oracle
 
 集計スクリプト、グラフ登録ルール、Cactiグラフテンプレートエクスポートファイル一式をアーカイブします
 
 	mkdir -p $GETPERF_HOME/var/template/archive/
 	sumup --export=Oracle --archive=$GETPERF_HOME/var/template/archive/config-Oracle.tar.gz
 
-Nimbleテンプレートのインポート
+テンプレートのインポート
 ---------------------
 
 前述で作成した $GETPERF_HOME/var/template/archive/config-Nimble.tar.gz がNimbleテンプレートのアーカイブとなり、
@@ -73,7 +73,7 @@ Nimbleテンプレートのインポート
 
 Cacti グラフテンプレートをインポートします。
 
-	cacti-cli --import Nimble
+	cacti-cli --import Oracle
 
 インポートした集計スクリプトを反映するため、集計デーモンを再起動します
 
@@ -82,11 +82,12 @@ Cacti グラフテンプレートをインポートします。
 使用方法
 =====
 
-Statspack の導入
---------------------
 
-Statspack レポートは定期的に DB 統計情報をスナップショット表に蓄積するため、定期的にスナップショット表をメンテナンスする必要があります。
-メンテナンスをせずに Statspack 運用すると、Statspackのスナップショットの採取負荷影響など思わぬ障害が発生する場合が有ります。
+
+**注意事項 : Statspack導入の注意点**
+
+Statspack を運用する場合は Statspack データ領域の定期メンテナンスをする必要があります。
+メンテナンスをせずに Statspack 運用すると、Statspack のスナップショットの採取負荷影響など思わぬ障害が発生する場合が有ります。
 以下の点を心がけ、計画的に Statspack を導入するようにしてください。
 
 1. Statspack 用表領域の作成
@@ -105,7 +106,7 @@ AWR レポートを使用する場合は上記作業は不要です。
 エージェントセットアップ
 --------------------
 
-ArrayFort の場合、以下のエージェント採取設定ファイルを監視対象サーバにコピーして、エージェントを再起動してください。
+以下のエージェント採取設定ファイルを監視対象サーバにコピーして、エージェントを再起動してください。
 
 	{サイトホーム}/lib/agent/Oracle/conf/Oracle.ini
 
@@ -139,7 +140,6 @@ SC3000 の場合、監視対象サーバから直接採取する場合と、リ�
 --------------------
 
 上記エージェントセットアップ後、データ集計が実行されると、サイトホームディレクトリの lib/Getperf/Command/Master/ の下に Oracle.pm ファイルが出力されます。
-本ファイルは監視対象ストレージのマスター定義ファイルで、ストレージのコントローラ、LUN、Raidグループの用途を記述します。
 同ディレクトリ下の Oracle.pm_sample を例にカスタマイズしてください。
 
 グラフ登録
@@ -148,7 +148,7 @@ SC3000 の場合、監視対象サーバから直接採取する場合と、リ�
 上記エージェントセットアップ後、データ集計が実行されると、サイトホームディレクトリの node の下にノード定義ファイルが出力されます。
 出力されたファイル若しくはディレクトリを指定してcacti-cli を実行します。
 
-	cacti-cli node/ArrayFort/{ストレージノード}/
+	cacti-cli node/Oracle/{Oracleインスタンス名}/
 
 AUTHOR
 -----------

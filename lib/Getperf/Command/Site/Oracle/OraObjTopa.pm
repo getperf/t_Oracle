@@ -61,7 +61,8 @@ sub parse {
 
 	$data_info->step($step);
 	$data_info->is_remote(1);
-	my $instance = $data_info->file_suffix;
+    my $instance = $data_info->file_name;
+    $instance=~s/^.+_//g;
 	my $sec  = $data_info->start_time_sec->epoch;
 	if (!$sec) {
 		return;
@@ -74,20 +75,21 @@ sub parse {
 			$sec = localtime(Time::Piece->strptime($1, '%y/%m/%d %H:%M:%S'))->epoch;
 			next;
 		}
-		my ($timestamp, $owner, $segment_name, $bytes, $buffer_type, $object_type, $tablespace_name, @values) = split(/\s*\|\s*/, $line);
+		my ($timestamp, $owner, $segment_name, $bytes, $buffer_type, $object_type, $tablespace_name, @values) = split(/\s*[\|,]\s*/, $line);
 		next if (!defined($timestamp) || $timestamp eq 'TIME');
-		my $object_key = join('.', $object_type, $owner, $segment_name);
+		my $object_key = join('.', $object_type || '', $owner || '', $segment_name || '');
 		$object_key=~s/[\$\s\\]/_/g;
+		$object_key=~s/(\()(.+?)(\))/_$2/g;
 		my $col = 0;
 		map {
 			my $header = $headers[$col];
-			$results{$object_key}{$sec}{$header} = $_;
-			$obj_stats{$object_key}{$header}    += $_;
+			$results{$object_key}{$sec}{$header} = $_ || 0;
+			$obj_stats{$object_key}{$header}    += $_ || 0;
 			$col ++;
 		} @values[0..5];
 	}
 	close($in);
-# print Dumper \%results;
+
 	my $query_items =
 		"SELECT  g.local_graph_id, gi.sequence, " .
 		"    gi.id graph_templates_item_id, gi.text_format, " .
@@ -113,8 +115,17 @@ sub parse {
 			$rank ++;
 			last if ($n_top < $rank);
 		}
-		print Dumper \@obj_rank_top_n; exit;
-		$rank = 1;
+		my $ranks_n = scalar(@obj_ranks);
+		my @obj_ranks_top_n;
+		if ($ranks_n < $n_top) {
+			@obj_ranks_top_n = (@obj_ranks, ('dummy') x ($n_top - $ranks_n));
+		} else {
+			@obj_ranks_top_n = @obj_ranks[0..$n_top-1];
+		}
+		$data_info->regist_devices_alias($instance, 'Oracle', 'ora_obj_top',
+		                                 'ora_obj_top_by_' . $sort_key,
+		                                 \@obj_ranks_top_n, undef);
+
 		my $graph_header = $graph_headers{$sort_key};
 		for my $graph_title_suffix('', ' - 2', ' - 3', ' - 4') {
 			my $graph_title = "Oracle - ${instance} - " . $graph_header . $graph_title_suffix;

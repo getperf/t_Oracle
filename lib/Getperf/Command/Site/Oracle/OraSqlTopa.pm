@@ -1,4 +1,4 @@
-package Getperf::Command::Site::Oracle::OraSqlTop;
+package Getperf::Command::Site::Oracle::OraSqlTopa;
 use strict;
 use warnings;
 use Data::Dumper;
@@ -46,6 +46,23 @@ sub purge_sql_hash_rrd_data {
 	close($in);
 }
 
+# 2016/06/14 15:05:02,2752655454,12526,0,-2835396088,12526,10651.782606,10655.076255,JDBC Thin Client
+# 2016/06/14 15:05:02,2958636951,11785,4,19204928,15036,5484.516535,5488.679994,RTD
+# 2016/06/14 15:05:02,1540480579,3375,120,8177737,12449,1471.870296,1471.999501,RTD
+# 2016/06/14 15:05:02,1381251789,219120,106,37908478,219117,802.071832,802.367197,JDBC Thin Client
+  # a.SQL_ID,
+  # a.PLAN_HASH_VALUE,
+  # d.OLD_HASH_VALUE,
+  # d.HASH_VALUE,
+  # a.EXECUTIONS,
+  # a.DISK_READS,
+  # a.BUFFER_GETS,
+  # a.ROWS_PROCESSED,
+  # a.CPU_TIME,
+  # a.ELAPSED_TIME,
+  # c.COMMAND_TYPE,
+  # a.MODULE
+
 sub parse {
     my ($self, $data_info) = @_;
 
@@ -61,8 +78,10 @@ sub parse {
 
 	$data_info->step($step);
 	$data_info->is_remote(1);
-	my $instance = $data_info->file_suffix;
-	my $sec  = $data_info->start_time_sec->epoch;
+	# my $instance = $data_info->file_suffix;
+    my $instance = $data_info->file_name;
+    $instance=~s/^.+_//g;
+    my $sec  = $data_info->start_time_sec->epoch;
 	if (!$sec) {
 		return;
 	}
@@ -70,22 +89,21 @@ sub parse {
 	open( my $in, $data_info->input_file ) || die "@!";
 	while (my $line = <$in>) {
 		$line=~s/(\r|\n)*//g;			# trim return code
-		if ($line=~/Date:(.*)/) {		# parse time: 16/05/23 14:56:52
+		if ($line=~/Date:(.*)/) {               # parse time: 16/05/23 14:56:52
 			$sec = localtime(Time::Piece->strptime($1, '%y/%m/%d %H:%M:%S'))->epoch;
 			next;
 		}
-		my ($timestamp, $sql_hash, @values) = split(/\s*\|\s*/, $line);
+		my ($timestamp, $plan_hash, $sql_hash, $sql_hash2, @values) = split(/\s*[\|,]\s*/, $line);
 		next if (!defined($timestamp) || $timestamp eq 'TIME');
-		my $col = 0;
-		map {
+		for my $col (0..5) {
 			my $header = $headers[$col];
-			$results{$sql_hash}{$sec}{$header} = $_;
-			$sql_stats{$sql_hash}{$header}    += $_;
-			$col ++;
-		} @values[0..5];
+			my $value = $values[$col];
+			$results{$sql_hash}{$sec}{$header} = $value || 0;
+			$sql_stats{$sql_hash}{$header}    += $value || 0;
+		}
+
 	}
 	close($in);
-
 	my $query_items =
 		"SELECT  g.local_graph_id, gi.sequence, " .
 		"    gi.id graph_templates_item_id, gi.text_format, " .
