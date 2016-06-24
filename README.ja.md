@@ -1,15 +1,30 @@
 Oracle モニタリングテンプレート
-===============================================
+===============================
 
 Oracle モニタリング
--------------
+-------------------
 
-以下の監視対象に対して東芝ストレージサポートユーティリティ付属の、tsuacsコマンド(ArrayFort の場合は aeuacs)を
-実行してストレージのパフォーマンス情報を採取します。採取したデータをモニタリングサーバ側で集計してグラフ登録をします。
+Oracle のパフォーマンスモニタリングや、Oracle 表領域使用率、Oracle アラートログの監視をします(*1)。
 
+その特徴は、以下の通りです。
+
+* Oracle R12 をサポートします。
+* HA構成の場合、サービスIPのチェックを行い、稼働系でデータ採取をします。
+* ネットワーク経由で複数インスタンスの DB をリモート採取する構成が可能です。
+* Oracle パフォーマンス調査用パッケージ Statspack もしくは、 AWR (*2)を使用します。
+	- Statspack レベル 5以上で、SQL 負荷ランキンググラフを表示します。
+	- Statspack レベル 7以上で、オブジェクトアクセス負荷ランキンググラフを表示します。
+* Zabbix を使用して、Oracle の表領域使用率の閾値監視をします(*2)。
+* Zabbix と、Zabbix エージェントを使用して、Oracle アラートログの監視をします(*3)。
+
+**注意事項**
+
+1. Zabbix 監視はオプションとなります。
+2. AWR を利用する際はオプションライセンスが必要です。詳細は [Oracle社ホームページ](http://www.oracle.com/)を参照してください。
+3. Oracle 表領域使用率の閾値監視にはZabbixサーバが必要になります。Oracle アラートログ監視には、Zabbix サーバに加え、監視エージェントが必要になります。
 
 ファイル構成
--------
+------------
 
 テンプレートに必要な設定ファイルは以下の通りです。
 
@@ -22,51 +37,39 @@ Oracle モニタリング
 | lib/cacti/template/0.8.8g/       | xmlファイル              | Cactiテンプレートエクスポートファイル |
 | script/                          | create_graph_template.sh | グラフテンプレート登録スクリプト      |
 
-Oracle モニタリング仕様
------------------------
-
-|     監視項目    | 間隔(規定値) |                              定義                             |
-|-----------------|--------------|---------------------------------------------------------------|
-| Global I/O 統計 | 1時間        | Nimble Storage 用 SNMP 統計(コントローラ用)を採取します       |
-| Volume I/O 統計 | 30秒         | Nimble Storage 用 SNMP 統計(ディスクボリューム用)を採取します |
-
-**リファレンス**
-
-* [Nimble OS SNMP Reference Guide](https://static.spiceworks.com/attachments/post/0007/3827/nimble_os_snmp_reference_guide.pdf)
 
 Install
-=====
+=======
 
 テンプレートのビルド
--------------------
+--------------------
 
-Git Hub からプロジェクトをクローンします
+Git Hub からプロジェクトをクローンします。
 
 	(git clone してプロジェクト複製)
 
-プロジェクトディレクトリに移動して、--template オプション付きでサイトの初期化をします
+プロジェクトディレクトリに移動して、--template オプション付きでサイトの初期化をします。
 
 	cd t_Oracle
 	initsite --template .
 
-Cacti グラフテンプレート作成スクリプトを順に実行します
+Cacti グラフテンプレート作成スクリプトを順に実行します。
 
 	./script/create_graph_template__oracle.sh
 
-Cacti グラフテンプレートをファイルにエクスポートします
+Cacti グラフテンプレートをファイルにエクスポートします。
 
 	cacti-cli --export Oracle
 
-集計スクリプト、グラフ登録ルール、Cactiグラフテンプレートエクスポートファイル一式をアーカイブします
+集計スクリプト、グラフ登録ルール、Cactiグラフテンプレートエクスポートファイル一式をアーカイブします。
 
 	mkdir -p $GETPERF_HOME/var/template/archive/
 	sumup --export=Oracle --archive=$GETPERF_HOME/var/template/archive/config-Oracle.tar.gz
 
 テンプレートのインポート
----------------------
+------------------------
 
-前述で作成した $GETPERF_HOME/var/template/archive/config-Nimble.tar.gz がNimbleテンプレートのアーカイブとなり、
-監視サイト上で以下のコマンドを用いてインポートします
+前述で作成した $GETPERF_HOME/var/template/archive/config-Oracle.tar.gz をインポートします。
 
 	cd {モニタリングサイトホーム}
 	tar xvf $GETPERF_HOME/var/template/archive/config-Oracle.tar.gz
@@ -79,10 +82,54 @@ Cacti グラフテンプレートをインポートします。
 
 	sumup restart
 
-使用方法
-=====
+
+エージェントセットアップ
+========================
+
+HA構成の場合の設定
+------------------
+
+サーバで Oracle インスタンスが稼働しているかチェックするスクリプト hastat.pl を編集します。
+HA構成のサーバの場合、本スクリプトを実行して稼働系のサーバのみ情報採取をする様に事前チェックを行います。
+
+	vi ~/ptune/script/hastat.pl
+
+サービスIP
+
+	my %services = (
+	        '192.168.10.2' => 'orcl',
+	);
+
+ネットワーク経由でリモート採取する場合の設定
+--------------------------------------------
+
+Statspack/AWR の設定
+--------------------
+
+Statspack の場合
+
+AWR の場合
+
+Oracle アラートログの監視設定
+-----------------------------
+
+エージェントの起動
+------------------
+
+Cacti グラフ登録
+================
 
 
+上記エージェントセットアップ後、データ集計が実行されると、サイトホームディレクトリの node の下にノード定義ファイルが出力されます。
+出力されたファイル若しくはディレクトリを指定してcacti-cli を実行します。
+
+	cacti-cli node/Oracle/{Oracleインスタンス名}/
+
+Zabbix 監視登録
+===============
+
+その他
+======
 
 **注意事項 : Statspack導入の注意点**
 
@@ -102,53 +149,6 @@ AWR レポートを使用する場合は上記作業は不要です。
 | ora_sp_run_stat.sh      | スナップショット表の統計情報を採取します   |
 | ora_sp_tuning_param.sql | Statspack 閾値調整用にサイズの調整をします |
 |                         |                                            |
-
-エージェントセットアップ
---------------------
-
-以下のエージェント採取設定ファイルを監視対象サーバにコピーして、エージェントを再起動してください。
-
-	{サイトホーム}/lib/agent/Oracle/conf/Oracle.ini
-
-サーバで Oracle インスタンスが稼働しているかチェックするスクリプト hastat.pl を編集します。
-HA構成のサーバの場合、本スクリプトを実行して稼働系のサーバのみ情報採取をする様に事前チェックを行います。
-
-	vi ~/ptune/script/hastat.pl
-
-サービスIP
-
-	my %services = (
-	        '192.168.10.2' => 'orcl',
-	);
-
-SC3000 の場合、監視対象サーバから直接採取する場合と、リモートで採取する場合で実行オプションの変更が必要になります。
-
-	vi ~/ptune/conf/Oracle.ini
-
-以下例はリモート採取の設定となります。
-
-	;---------- Monitor command config (Storage HW resource) -----------------------------------
-	STAT_ENABLE.Oracle = true
-	STAT_INTERVAL.Oracle = 300
-	STAT_TIMEOUT.Oracle = 400
-	STAT_MODE.Oracle = concurrent
-
-	; SC3000
-	STAT_CMD.Oracle = 'sudo /usr/local/TSBtsu/bin/tsuacs -h {ストレージIPアドレス} -T 60 -n 5 -all',   {ストレージIPアドレス}/tsuacs.txt
-
-データ集計のカスタマイズ
---------------------
-
-上記エージェントセットアップ後、データ集計が実行されると、サイトホームディレクトリの lib/Getperf/Command/Master/ の下に Oracle.pm ファイルが出力されます。
-同ディレクトリ下の Oracle.pm_sample を例にカスタマイズしてください。
-
-グラフ登録
------------------
-
-上記エージェントセットアップ後、データ集計が実行されると、サイトホームディレクトリの node の下にノード定義ファイルが出力されます。
-出力されたファイル若しくはディレクトリを指定してcacti-cli を実行します。
-
-	cacti-cli node/Oracle/{Oracleインスタンス名}/
 
 AUTHOR
 -----------
