@@ -13,10 +13,8 @@ CWD=$(cd $(dirname $0) && pwd)
 MODE=
 USER=perfstat/perfstat
 PURGE=YES
-CATEGORY="ORACLE"
 SCRIPT="ora10g"
 SNAPSHOT_LEVEL=1
-TBS_IO=NO
 CHECK_PROCESS=YES
 
 # Usage
@@ -46,18 +44,13 @@ do
 		;;
 	u)	USER=$OPTARG
 		;;
-	c)	CATEGORY=$OPTARG
-		;;
-	t)	TBS_IO="YES"
-		;;
 	e)	ERR=$OPTARG
 		;;
 	d)	SCRIPT=$OPTARG
 		;;
     \?) echo "Usage" 1>&2
-        echo "$CMDNAME [-s] [-n purgecnt] [-u user/pass[@tns]] [-c cat] [-i sid]" 1>&2
-        echo "$USAGE           [-l dir] [-r instance_num] [-d ora12c]\n" 1>&2
-        echo "$USAGE           [-v snaplevel] [-e err] [-d script] [-x]" 1>&2
+        echo "$CMDNAME [-u user/pass[@tns]] [-i sid]" 1>&2
+        echo "$USAGE          [-l dir] [-d ora12c] [-v snaplevel] [-e err] [-x]" 1>&2
         exit 1
 		;;
 	esac

@@ -10,8 +10,7 @@ for my $line(@buf) {
 	if ($line=~/(inet.*?)(\d.*?)\s/) {
 		my $ip = $2;
 		if (defined(my $service = $services{$ip})) {
-			print $service;
-			exit;
+			print $service . "\n";
 		}
 	}
 }

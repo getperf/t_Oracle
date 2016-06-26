@@ -17,7 +17,7 @@ USAGE="Usage: $CMDNAME [-l dir] [-e errfile] [-i sid] [-u userid/passwd] [-f src
 # Set default param
 CWD=`dirname $0`
 DIR=.
-SID=RTD
+SID=
 CNT=1
 INTERVAL=10
 USER=perfstat/perfstat

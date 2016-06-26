@@ -15,7 +15,6 @@ MODE=DEFAULT
 USER=perfstat/perfstat
 PURGE=YES
 PURGE_LEVEL=0
-CATEGORY="ORACLE"
 SCRIPT="ora12c"
 SNAPSHOT_LEVEL=5
 CHECK_PROCESS=YES
@@ -49,17 +48,15 @@ do
         ;;
     u) USER=$OPTARG
         ;;
-    c) CATEGORY=$OPTARG
-        ;;
     e) ERR=$OPTARG
         ;;
     d) SCRIPT=$OPTARG
         ;;
     \?)
         echo "Usage" 1>&2
-        echo "$CMDNAME [-s] [-n purgecnt] [-u user/pass[@tns]] [-c cat] [-i sid]" 1>&2
+        echo "$CMDNAME [-s] [-n purgecnt] [-u user/pass[@tns]] [-i sid]" 1>&2
         echo "$USAGE           [-l dir] [-r instance_num] [-d ora12c]\n" 1>&2
-        echo "$USAGE           [-v snaplevel] [-e err] [-d script] [-x]" 1>&2
+        echo "$USAGE           [-v snaplevel] [-e err] [-x]" 1>&2
         exit 1
         ;;
     esac
@@ -122,8 +119,8 @@ fi
 
 # Open "snpids" work file
 NSNAPID=0
-if [ -f ${WORK}/snapids_${CATEGORY}_${SID} ]; then
-    exec 3<&0 < ${WORK}/snapids_${CATEGORY}_${SID}
+if [ -f ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID} ]; then
+    exec 3<&0 < ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}
     while read ID
     do
         NSNAPID=`expr $NSNAPID + 1`
@@ -160,7 +157,7 @@ fi
 if [ "${OLD_ID}" -gt "${NEW_ID}" ]; then
     echo "ERROR : Snapshot if OLD_ID(=${OLD_ID}) > NEW_ID(=${NEW_ID}). Maybe Drop/Create Statspack"
     echo "delete snapids."
-    rm ${WORK}/snapids_${CATEGORY}_${SID}
+    rm ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}
     exit 1
 fi
 
@@ -280,10 +277,10 @@ ID=`expr $NSNAPID - 1000`
 if [ 0 -gt "${ID}" ]; then
     ID=1
 fi
-if [ -f ${WORK}/snapids_${CATEGORY}_${SID}_tmp ]; then
-    /bin/rm -f ${WORK}/snapids_${CATEGORY}_${SID}_tmp
+if [ -f ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp ]; then
+    /bin/rm -f ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp
     if [ 0 != $? ]; then
-        echo "ERROR : /bin/rm -f ${WORK}/snapids_${CATEGORY}_${SID}_tmp"
+        echo "ERROR : /bin/rm -f ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp"
         exit 1
     fi
 fi
@@ -291,16 +288,16 @@ fi
 while [ ${ID} -le ${NSNAPID} ];
 do
     eval TMP_ID=\$SNAP_$ID
-    echo ${TMP_ID} >> ${WORK}/snapids_${CATEGORY}_${SID}_tmp
+    echo ${TMP_ID} >> ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp
     ID=`expr $ID + 1`
 done
 
 if [ "${OLD_ID}" -lt "${NEW_ID}" ]; then
-    echo $NEW_ID >> ${WORK}/snapids_${CATEGORY}_${SID}_tmp
+    echo $NEW_ID >> ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp
 fi
-/bin/mv -f ${WORK}/snapids_${CATEGORY}_${SID}_tmp ${WORK}/snapids_${CATEGORY}_${SID}
+/bin/mv -f ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}
 if [ 0 != $? ]; then
-    echo "ERROR : /bin/mv -f ${WORK}/snapids_${CATEGORY}_${SID}_tmp ${WORK}/snapids_${CATEGORY}_${SID}"
+    echo "ERROR : /bin/mv -f ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}"
     exit 1
 fi
 
