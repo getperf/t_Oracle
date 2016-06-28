@@ -6,7 +6,7 @@ Oracle モニタリング
 
 Oracle のパフォーマンス統計、Oracle 表領域使用率、Oracle アラートログの監視をします。
 
-* Oracle R12 をサポートします。
+* Oracle R11, R12 をサポートします。
 * データ採取時にサービスIPのチェックを行い、HA構成の稼働系に対してデータ採取をします。
 * 複数サーバ、複数インスタンスの DB の場合、1つのエージェントから SQL*Net 経由で複数DBのデータを採取します。
 * Oracle パフォーマンス調査用パッケージ Statspack もしくは、 AWR (*1) を使用します。
@@ -18,7 +18,7 @@ Oracle のパフォーマンス統計、Oracle 表領域使用率、Oracle ア�
 **注意事項**
 
 1. Statspack は事前にインストールする必要があります。AWR を利用する際は特定のライセンスが必要になります。詳細は [Oracle社ホームページ](http://www.oracle.com/technetwork/jp/articles/index-349908-ja.html)　を参照してください。
-2. Zabbix 監視はオプションで、 Oracle 表領域使用率の閾値監視には Zabbix サーバが必要になります。Oracle アラートログ監視には、Zabbix サーバに加え、Zabbix エージェントが必要になります。
+2. Zabbix 監視はオプションで、 Zabbix サーバが必要になります。Oracle アラートログ監視には、Zabbix サーバに加え、Zabbix エージェントが必要になります。
 
 ファイル構成
 ------------
@@ -30,10 +30,10 @@ Oracle のパフォーマンス統計、Oracle 表領域使用率、Oracle ア�
 | lib/agent/Oracle/conf/           | iniファイル              | エージェント採取設定ファイル          |
 | lib/agent/Oracle/script/         | 採取スクリプト           | エージェント採取スクリプト            |
 | lib/Getperf/Command/Site/Oracle/ | pmファイル               | データ集計スクリプト                  |
-| lib/graph/Oracle/                | jsonファイル             | グラフテンプレート登録ルール          |
+| lib/graph/Oracle/                | jsonファイル             | Cactiグラフテンプレート登録ルール     |
+| lib/zabbix/Oracle/               | jsonファイル             | Zabbix監視テンプレート登録ルール      |
 | lib/cacti/template/0.8.8g/       | xmlファイル              | Cactiテンプレートエクスポートファイル |
 | script/                          | create_graph_template.sh | グラフテンプレート登録スクリプト      |
-
 
 Install
 =======
@@ -90,16 +90,14 @@ Oracleデータ採取ライブラリ一式を、監視対象のOracleサーバ�
 
 	ls lib/agent/Oracle/
 	conf  script
-
-エージェントホームディレクトリにコピーします。
-
 	scp lib/agent/Oracle/* {OSユーザ}@{監視対象IP}:~/ptune/
+
 
 エージェント実行 OSユーザの環境設定
 ------------------------
 
 ここからの作業は監視対象のエージェントが稼働するサーバで行います。
-エージェント実行 OSユーザに sqlplus などのコマンドが実行できるよう、Oracle の環境変数の設定を行います。
+エージェント実行 OSユーザに sqlplus などの Oracle コマンドが実行できるよう、Oracle の環境変数の設定を行います。
 以下のOracle ホームの環境変数設定ファイルをコピーします。
 
 	sudo ls -la ~oracle/.profile_orcl
@@ -171,7 +169,7 @@ Oracle.ini ファイルの以下の行を編集します。
 
 * -l {dir}
 
-	Statspack レポートの保存ディレクトリを指定します。Oracle.ini での設定は \_odir\_ マクロを指定します。
+	Statspack レポートの保存ディレクトリを指定します。通常、Oracle.ini での設定は '\_odir\_' マクロを指定します。
 
 * -r {instance_num}
 
@@ -214,7 +212,7 @@ AWR の設定や運用の詳細は[Oracle社ホームページ](https://blogs.or
 Oracle アラートログの参照権限の付与
 -----------------------------
 
-アラート・ログは以下のように初期化パラメータ DIAGNOSTIC_DEST で示される場所に出力されています。
+アラート・ログは以下のように初期化パラメータ DIAGNOSTIC_DEST で示される場所に出力されます。
 
 	<DIAGNOSTIC_DEST>/diag/rdbms/<DB_NAME>/<SID>/trace/
 
@@ -223,11 +221,11 @@ DIAGNOSTIC_DEST のデフォルトの設定は ORACLE_BASE 環境変数ですの
 	sudo ls -l /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
 	-rw------- 1 oracle oinstall 207816  6月 26 09:05 2016 /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
 
-オーナのみのアクセス権限となっているため、エージェント実行ユーザがアクセスできるよう、参照権限を付与します。
+oracle オーナのみのアクセス権限となっているため、エージェント実行 OS ユーザがアクセスできるよう、参照権限を付与します。
 
 	sudo chmod a+r /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
 
-エージェント実行ユーザでアクセスができるか確認します。
+エージェント実行 OS ユーザでアクセスができるか確認します。
 
 	tail /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
 
@@ -254,7 +252,7 @@ Zabbix 監視登録
 .hosts への監視対象サーバIPの登録
 ----------------------------
 
-監視対象サーバのDNSなどが設定されていない場合は、.hosts ファイルに IP アドレスの設定をします。
+DNSなどが設定されておらず、監視対象サーバホスト名からIPアドレスの参照ができない場合は、.hosts ファイルに IP アドレスとホスト名の設定をします。
 
 	cd {サイトホーム}
 	vi .hosts

@@ -26,4 +26,11 @@ cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_seg_etc.json
 cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_seg_index.json
 cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_seg_table.json
 
-cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_sql_top.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_sql_top_by_buffer_gets.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_sql_top_by_cpu_time.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_sql_top_by_disk_reads.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_obj_top_by_buffer_gets.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_obj_top_by_disk_reads.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_obj_top_by_logical_reads.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_obj_top_by_physical_reads.json
+cacti-cli -f -g $GRAPH_CONFIG/Oracle/ora_obj_top_by_physical_writes.json

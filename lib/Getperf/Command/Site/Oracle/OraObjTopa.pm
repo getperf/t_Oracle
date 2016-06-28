@@ -32,8 +32,8 @@ sub purge_object_rank_rrd_data {
 	my $storage_dir = $data_info->{absolute_storage_dir};
 	my $limit_time  = $data_info->start_time_sec->epoch - $PURGE_RRD_HOUR * 3600;
 
-	# purge storage/Oracle/{sid}/device/ora_obj_topa__*.rrd
-	my $rrdfile_filter = "$storage_dir/Oracle/$instance/device/ora_obj_topa__\*.rrd";
+	# purge storage/Oracle/{sid}/device/ora_obj_top__*.rrd
+	my $rrdfile_filter = "$storage_dir/Oracle/$instance/device/ora_obj_top__\*.rrd";
 	open (my $in, "ls $rrdfile_filter |") || die "can't find '$rrdfile_filter' : $!";
 	while (my $rrdfile = <$in>) {
 		chomp $rrdfile;
@@ -96,7 +96,7 @@ sub parse {
 		"    dd.id data_template_data_id, dd.data_source_path " .
 		"FROM graph_templates_graph g, " .
 		"    graph_templates_item gi, " .
-		"    data_template_rrd dr USE INDEX (local_data_id), " .
+		"    data_template_rrd dr, " .
 		"    data_template_data dd " .
 		"WHERE gi.local_graph_id = g.local_graph_id " .
 		"    AND gi.task_item_id = dr.id " .
@@ -109,8 +109,8 @@ sub parse {
 		my @obj_ranks = sort { $obj_stats{$b}{$sort_key} <=> $obj_stats{$a}{$sort_key} } keys %obj_stats;
 		my $rank = 1;
 		for my $obj_key(@obj_ranks) {
-			$data_info->regist_device($instance, 'Oracle', 'ora_obj_topa', $obj_key, undef, \@headers);
-			my $output = "Oracle/${instance}/device/ora_obj_topa__${obj_key}.txt";
+			$data_info->regist_device($instance, 'Oracle', 'ora_obj_top', $obj_key, undef, \@headers);
+			my $output = "Oracle/${instance}/device/ora_obj_top__${obj_key}.txt";
 			$data_info->pivot_report($output, $results{$obj_key}, \@headers);
 			$rank ++;
 			last if ($n_top < $rank);
@@ -137,11 +137,11 @@ sub parse {
 					my $data_template_data_id   = $row->[4] || 0;
 					my $obj_key = shift(@obj_ranks);
 					if ($obj_key && $graph_templates_item_id && $data_template_data_id) {
-						my $rra = "<path_rra>/Oracle/${instance}/device/ora_obj_topa__${obj_key}.rrd";
+						my $rra = "<path_rra>/Oracle/${instance}/device/ora_obj_top__${obj_key}.rrd";
 						$self->update_cacti_graph_item($data_info, $obj_key, $graph_templates_item_id,
 							                           $data_template_data_id, $rra);
 					} else {
-						my $rra = "<path_rra>/Oracle/${instance}/device/ora_obj_topa__dummy.rrd";
+						my $rra = "<path_rra>/Oracle/${instance}/device/ora_obj_top__dummy.rrd";
 						$self->update_cacti_graph_item($data_info,, 'unkown', $graph_templates_item_id,
 							                           $data_template_data_id, $rra);
 					}
