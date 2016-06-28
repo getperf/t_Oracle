@@ -9,16 +9,16 @@ Oracle のパフォーマンス統計、Oracle 表領域使用率、Oracle ア�
 * Oracle R11, R12 をサポートします。
 * データ採取時にサービスIPのチェックを行い、HA構成の稼働系に対してデータ採取をします。
 * 複数サーバ、複数インスタンスの DB の場合、1つのエージェントから SQL*Net 経由で複数DBのデータを採取します。
-* Oracle パフォーマンス調査用パッケージ Statspack もしくは、 AWR (*1) を使用します。
+* Oracle パフォーマンス調査用パッケージ Statspack もしくは、 AWR (注意事項1) を使用します。
 	- Statspack レベル 5以上で、SQL ランキンググラフを表示します。
 	- Statspack レベル 7以上で、オブジェクトアクセスランキンググラフを表示します。
-* Zabbix を使用して、Oracle の表領域使用率の閾値監視をします(*2)。
-* Zabbix と、Zabbix エージェントを使用して、Oracle アラートログ監視をします(*2)。
+* Zabbix を使用して、Oracle の表領域使用率の閾値監視をします(注意事項2)。
+* Zabbix と、Zabbix エージェントを使用して、Oracle アラートログ監視をします(注意事項2)。
 
 **注意事項**
 
 1. Statspack は事前にインストールする必要があります。AWR を利用する際は特定のライセンスが必要になります。詳細は [Oracle社ホームページ](http://www.oracle.com/technetwork/jp/articles/index-349908-ja.html)　を参照してください。
-2. Zabbix 監視はオプションで、 Zabbix サーバが必要になります。Oracle アラートログ監視には、Zabbix サーバに加え、Zabbix エージェントが必要になります。
+2. Zabbix 監視オプションを有効にし、 Zabbix サーバ環境が必要になります。Oracle アラートログ監視には、Zabbix サーバに加え、監視対象に Zabbix エージェントのインストールが必要になります。
 
 ファイル構成
 ------------
@@ -34,6 +34,30 @@ Oracle のパフォーマンス統計、Oracle 表領域使用率、Oracle ア�
 | lib/zabbix/Oracle/               | jsonファイル             | Zabbix監視テンプレート登録ルール      |
 | lib/cacti/template/0.8.8g/       | xmlファイル              | Cactiテンプレートエクスポートファイル |
 | script/                          | create_graph_template.sh | グラフテンプレート登録スクリプト      |
+
+メトリック
+-----------
+
+Oracleパフォーマンス統計グラフなどの監視項目定義は以下の通りです。
+
+| Key | Description |
+| --- | ----------- |
+| **パフォーマンス統計** | **Statspack レポートのOracleパフォーマンス統計グラフ** |
+| Events | **Oracle イベントの待ち時間**<br> CPU time / db file scattered read / db file sequential read / SQL\*Net message from dblink / log file sync / ...|
+| Loads | **Oracle ロードプロファイル** <br> Logical reads / Block changes / Physical reads |
+| Efficiency | **Oracle キャッシュヒット率** <br> Buffer Nowait % / Redo NoWait % / Buffer Hit % / Library Hit % / Latch Hit % ... |
+| Redo | **Oracle Redoサイズ** <br> 1秒あたりのOracle Redo ログ更新転送サイズ |
+| Transactions | **Oracle トランザクション数**<br> 1秒あたりのトランザクション実行数 |
+| Executes | **Oracle SQL実行数**<br> 1秒あたりのSQL実行数 |
+| **表領域使用率**| **Oracle 表領域の使用率グラフ** |
+| Segment size | **Oracle 各セグメントの使用量**<br> Table / Index / Etc |
+| Table　space size | **Oracle 表領域使用率**<br> Zabbix による表領域使用率の閾値監視 |
+| **SQL負荷ランキング** | **Statspack レポートのOracle負荷ランキンググラフ** |
+| SQL | **Oracle SQL負荷ランキング**<br>SQL CPU Time Ranking / SQL Buffer Get Ranking / SQL Disk Read Ranking |
+| Object access | **Oracle オブジェクトアクセスランキング**<br>Object Logical Read Ranking / Object Physical Read Ranking / Object Physical Write Ranking |
+| **ログ監視**| **イベントログ監視** |
+| Alert log | **Oracle アラートログ監視**<br> Zabbix によるOracle アラートログのログイベント監視 |
+
 
 Install
 =======
@@ -212,11 +236,8 @@ AWR の設定や運用の詳細は[Oracle社ホームページ](https://blogs.or
 Oracle アラートログの参照権限の付与
 -----------------------------
 
-アラート・ログは以下のように初期化パラメータ DIAGNOSTIC_DEST で示される場所に出力されます。
-
-	<DIAGNOSTIC_DEST>/diag/rdbms/<DB_NAME>/<SID>/trace/
-
-DIAGNOSTIC_DEST のデフォルトの設定は ORACLE_BASE 環境変数ですので、例えば ORACLE_BASE 環境変数が "/u01/app/oracle" でかつデータベース名、SID が "orcl" の場合、アラート・ログの出力先は、以下となります。
+Oracle アラート・ログをエージェント実行 OS ユーザでアクセスできるように参照権限を変更します。アラートログのアクセス権限を確認します。
+以下例では ORACLE_BASE 環境変数が "/u01/app/oracle" でかつデータベース名、SID が "orcl" の場合、アラート・ログの出力先は、以下となります。
 
 	sudo ls -l /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
 	-rw------- 1 oracle oinstall 207816  6月 26 09:05 2016 /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
