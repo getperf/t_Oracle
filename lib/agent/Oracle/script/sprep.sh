@@ -106,7 +106,7 @@ fi
 
 # Execute snap of statspack
 if [ "RUNSNAP" = "${MODE}" ]; then
-    ${SQLPLUS} -s ${USER} << EOF1 > ${ERR} 2>&1
+    ${SQLPLUS} -s ${USER} << EOF1  > ${ERR} 2>&1
     WHENEVER SQLERROR EXIT 1;
     exec statspack.snap(i_snap_level=>${SNAPSHOT_LEVEL});
 EOF1
@@ -255,7 +255,6 @@ EOF6
     else
     {
         cd ${ORACLE_HOME}/rdbms/admin
-        ${CWD}/${SCRIPT}
         ${SQLPLUS} -s ${USER} << EOF7 > ${ERR} 2>&1
         WHENEVER SQLERROR EXIT 1;
         define losnapid=${OLDEST_ID}

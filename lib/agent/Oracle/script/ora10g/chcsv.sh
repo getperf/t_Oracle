@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # This procedure execute Oracle statspack snap and report.
 #
@@ -17,7 +17,7 @@ USAGE="Usage: $CMDNAME [-l dir] [-e errfile] [-i sid] [-u userid/passwd] [-f src
 # Set default param
 CWD=`dirname $0`
 DIR=.
-SID=
+SID=RTD
 CNT=1
 INTERVAL=10
 USER=perfstat/perfstat
