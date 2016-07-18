@@ -58,7 +58,6 @@ Oracleパフォーマンス統計グラフなどの監視項目定義は以下�
 | **ログ監視**| **イベントログ監視** |
 | Alert log | **Oracle アラートログ監視**<br> Zabbix によるOracle アラートログのログイベント監視 |
 
-
 Install
 =======
 
@@ -67,42 +66,57 @@ Install
 
 Git Hub からプロジェクトをクローンします。
 
-	(git clone してプロジェクト複製)
+```
+(git clone してプロジェクト複製)
+```
 
 プロジェクトディレクトリに移動して、--template オプション付きでサイトの初期化をします。
 
-	cd t_Oracle
-	initsite --template .
+```
+cd t_Oracle
+initsite --template .
+```
 
 Cacti グラフテンプレート作成スクリプトを順に実行します。
 
-	./script/create_graph_template__oracle.sh
+```
+./script/create_graph_template__oracle.sh
+```
 
 Cacti グラフテンプレートをファイルにエクスポートします。
 
-	cacti-cli --export Oracle
+```
+cacti-cli --export Oracle
+```
 
 集計スクリプト、グラフ登録ルール、Cactiグラフテンプレートエクスポートファイル一式をアーカイブします。
 
-	mkdir -p $GETPERF_HOME/var/template/archive/
-	sumup --export=Oracle --archive=$GETPERF_HOME/var/template/archive/config-Oracle.tar.gz
+```
+mkdir -p $GETPERF_HOME/var/template/archive/
+sumup --export=Oracle --archive=$GETPERF_HOME/var/template/archive/config-Oracle.tar.gz
+```
 
 テンプレートのインポート
 ------------------------
 
 監視サイトに前述で作成したアーカイブファイルを解凍します。
 
-	cd {モニタリングサイトホーム}
-	tar xvf $GETPERF_HOME/var/template/archive/config-Oracle.tar.gz
+```
+cd {モニタリングサイトホーム}
+tar xvf $GETPERF_HOME/var/template/archive/config-Oracle.tar.gz
+```
 
 Cacti グラフテンプレートをインポートします。
 
-	cacti-cli --import Oracle
+```
+cacti-cli --import Oracle
+```
 
 インポートした集計スクリプトを反映するため、集計デーモンを再起動します。
 
-	sumup restart
-
+```
+sumup restart
+```
 
 エージェントセットアップ
 ========================
@@ -112,10 +126,11 @@ Cacti グラフテンプレートをインポートします。
 
 Oracleデータ採取ライブラリ一式を、監視対象のOracleサーバに配布します。監視サイトのlib の下にある以下のディレクトリ下のファイル一式を監視対象の エージェントホームディレクトリにコピーします。
 
-	ls lib/agent/Oracle/
-	conf  script
-	scp lib/agent/Oracle/* {OSユーザ}@{監視対象IP}:~/ptune/
-
+```
+ls lib/agent/Oracle/
+conf  script
+scp lib/agent/Oracle/* {OSユーザ}@{監視対象IP}:~/ptune/
+```
 
 エージェント実行 OSユーザの環境設定
 ------------------------
@@ -124,18 +139,24 @@ Oracleデータ採取ライブラリ一式を、監視対象のOracleサーバ�
 エージェント実行 OSユーザに sqlplus などの Oracle コマンドが実行できるよう、Oracle の環境変数の設定を行います。
 以下のOracle ホームの環境変数設定ファイルをコピーします。
 
-	sudo ls -la ~oracle/.profile_orcl
-	-rwxrwxr-x 1 oracle oinstall 2091  5月 20 06:20 2016 /home/oracle/.profile_orcl
+```
+sudo ls -la ~oracle/.profile_orcl
+-rwxrwxr-x 1 oracle oinstall 2091  5月 20 06:20 2016 /home/oracle/.profile_orcl
+```
 
 環境変数設定ファイルをエージェントホームディレクトリ下の以下のパスにコピーし、参照権限を付与します。
 
-	sudo cp ~oracle/.profile_orcl ~/ptune/script/ora12c/oracle_env
-	sudo chmod a+r ~/ptune/script/ora12c/oracle_env
+```
+sudo cp ~oracle/.profile_orcl ~/ptune/script/ora12c/oracle_env
+sudo chmod a+r ~/ptune/script/ora12c/oracle_env
+```
 
 コピーした環境変数設定ファイルを読み込んで、エージェント実行OSユーザで sqlplus で接続できるか動作確認をします。
 
-	source ~/ptune/script/ora12c/oracle_env
-	sqlplus perfstat/perfstat
+```
+source ~/ptune/script/ora12c/oracle_env
+sqlplus perfstat/perfstat
+```
 
 接続できたら、'quit'でsqlplusを終了します。
 
@@ -144,13 +165,17 @@ HA構成の場合の設定
 
 HA構成のサーバの場合、稼働系のサーバのみでデータ採取を実行する様に事前チェックを行う設定が必要です。チェックスクリプト hastat.pl を編集します。
 
-	vi ~/ptune/script/hastat.pl
+```
+vi ~/ptune/script/hastat.pl
+```
 
 以下例のように 監視対象の Oracle インスタンスとサービス IP の紐づけを設定します。
 
-	my %services = (
-	        '192.168.0.1' => 'orcl',
-	);
+```
+my %services = (
+        '192.168.0.1' => 'orcl',
+);
+```
 
 Statspack/AWR の設定
 --------------------
@@ -166,14 +191,18 @@ Statspack/AWR の設定
 
 Oracle.ini ファイルの以下の行を編集します。
 
-	; Performance report for Statspack
-	STAT_CMD.Oracle = '_script_/sprep.sh ...'
+```
+; Performance report for Statspack
+STAT_CMD.Oracle = '_script_/sprep.sh ...
+```
 
 行内の sprep.sh スクリプトで Statspack のデータ採取を行います。その実行オプションは以下の通りです。
 
-	sprep.sh [-s] [-n purgecnt] [-u user/pass[@tns]] [-i sid]
-	           [-l dir] [-r instance_num] [-d ora12c]\n
-	           [-v snaplevel] [-e err] [-x]
+```
+sprep.sh [-s] [-n purgecnt] [-u user/pass[@tns]] [-i sid]
+           [-l dir] [-r instance_num] [-d ora12c]\n
+           [-v snaplevel] [-e err] [-x]
+```
 
 * -s
 
@@ -219,16 +248,20 @@ Oracle.ini ファイルの以下の行を編集します。
 
 Oracle.ini ファイルの以下の行を編集します。
 
-	; Performance report for AWR
-	;STAT_CMD.Oracle = '_script_/awrrep.sh -l _odir_ -d ora12c -v 1'
-	;STAT_CMD.Oracle = '_script_/chcsv.sh  -l _odir_ -d ora12c -f ora_sql_topa'
-	;STAT_CMD.Oracle = '_script_/chcsv.sh  -l _odir_ -d ora12c -f ora_obj_topa'
+```
+; Performance report for AWR
+;STAT_CMD.Oracle = '_script_/awrrep.sh -l _odir_ -d ora12c -v 1'
+;STAT_CMD.Oracle = '_script_/chcsv.sh  -l _odir_ -d ora12c -f ora_sql_topa'
+;STAT_CMD.Oracle = '_script_/chcsv.sh  -l _odir_ -d ora12c -f ora_obj_topa'
+```
 
 行内の awrrep.sh スクリプトで AWR レポート採取を行います。
 awrrep.sh　の実行オプションは以下となり、値の定義はsprep.sh と同様です。
 
-	awrrep.sh [-u user/pass[@tns]] [-i sid]
-	          [-l dir] [-d ora12c] [-v snaplevel] [-e err] [-x]
+```
+awrrep.sh [-u user/pass[@tns]] [-i sid]
+          [-l dir] [-d ora12c] [-v snaplevel] [-e err] [-x]
+```
 
 AWR は Statspack と違い、AWR側でスナップショットの実行や削除をスケジューリングします。
 AWR の設定や運用の詳細は[Oracle社ホームページ](https://blogs.oracle.com/oracle4engineer/entry/column_howtouse_awr)を参照してください。
@@ -236,27 +269,39 @@ AWR の設定や運用の詳細は[Oracle社ホームページ](https://blogs.or
 Oracle アラートログの参照権限の付与
 -----------------------------
 
+**注意事項**
+
+Zabbix エージェントによる Oracle アラートログ監視のためにログファイルの参照権限を付与します。本機能はオプションとなり、ログ監視を使用しない場合は以下設定は不要です。
+
 Oracle アラート・ログをエージェント実行 OS ユーザでアクセスできるように参照権限を変更します。アラートログのアクセス権限を確認します。
 以下例では ORACLE_BASE 環境変数が "/u01/app/oracle" でかつデータベース名、SID が "orcl" の場合、アラート・ログの出力先は、以下となります。
 
-	sudo ls -l /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
-	-rw------- 1 oracle oinstall 207816  6月 26 09:05 2016 /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
+```
+sudo ls -l /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
+-rw------- 1 oracle oinstall 207816  6月 26 09:05 2016 /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
+```
 
 oracle オーナのみのアクセス権限となっているため、エージェント実行 OS ユーザがアクセスできるよう、参照権限を付与します。
 
-	sudo chmod a+r /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
+```
+sudo chmod a+r /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
+```
 
 エージェント実行 OS ユーザでアクセスができるか確認します。
 
-	tail /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
+```
+tail /u01/app/oracle/diag/rdbms/orcl/orcl/trace/alert_orcl.log
+```
 
 エージェントの起動
 ------------------
 
 設定を反映させるため、エージェントを再起動します。
 
-	~/ptune/bin/getperfctl stop
-	~/ptune/bin/getperfctl start
+```
+~/ptune/bin/getperfctl stop
+~/ptune/bin/getperfctl start
+```
 
 Cacti グラフ登録
 ================
@@ -264,8 +309,10 @@ Cacti グラフ登録
 上記エージェントセットアップ後、データ集計が実行されると、サイトホームディレクトリの node の下にノード定義ファイルが出力されます。
 出力されたノード定義ディレクトリを指定して cacti-cli を実行します。
 
-	cd {サイトホーム}
-	cacti-cli node/Oracle/{Oracleインスタンス名}/
+```
+cd {サイトホーム}
+cacti-cli node/Oracle/{Oracleインスタンス名}/
+```
 
 Zabbix 監視登録
 ===============
@@ -275,8 +322,10 @@ Zabbix 監視登録
 
 DNSなどが設定されておらず、監視対象サーバホスト名からIPアドレスの参照ができない場合は、.hosts ファイルに IP アドレスとホスト名の設定をします。
 
-	cd {サイトホーム}
-	vi .hosts
+```
+cd {サイトホーム}
+vi .hosts
+```
 
 "IPアドレス ホスト名" の形式で IP　アドレスを登録してください。
 
@@ -287,17 +336,21 @@ zabbix-cli コマンドの、 --info オプションで設定内容の確認を�
 
 **表領域閾値監視の設定**
 
-	# 設定内容の確認
-	zabbix-cli --info node/Oracle/{Oracleインスタンス名}/
-	# 問題がなければ登録
-	zabbix-cli --add node/Oracle/{Oracleインスタンス名}/
+```
+# 設定内容の確認
+zabbix-cli --info node/Oracle/{Oracleインスタンス名}/
+# 問題がなければ登録
+zabbix-cli --add node/Oracle/{Oracleインスタンス名}/
+```
 
 **Oracleアラートログの監視設定**
 
-	# 設定内容の確認
-	zabbix-cli --info node/Linux/{監視対象サーバ}/
-	# 問題がなければ登録
-	zabbix-cli --add node/Linux/{監視対象サーバ}/
+```
+# 設定内容の確認
+zabbix-cli --info node/Linux/{監視対象サーバ}/
+# 問題がなければ登録
+zabbix-cli --add node/Linux/{監視対象サーバ}/
+```
 
 その他
 ======
@@ -314,10 +367,10 @@ Statspack を運用する場合は Statspack データ領域の定期メンテ�
 
 Statspack メンテナンス用に ptune/script の下に以下のスクリプトを用意しています。
 
-|       スクリプト        |                    内容                    |
-|-------------------------|--------------------------------------------|
-| ora_sp_run_stat.sh      | スナップショット表の統計情報を採取します   |
-| ora_sp_tuning_param.sql | Statspack 閾値調整用のレポートをします |
+|       スクリプト        |                   内容                   |
+|-------------------------|------------------------------------------|
+| ora_sp_run_stat.sh      | スナップショット表の統計情報を採取します |
+| ora_sp_tuning_param.sql | Statspack 閾値調整用のレポートをします   |
 
 AUTHOR
 -----------
