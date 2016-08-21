@@ -1,6 +1,0 @@
-select output from table(dbms_workload_repository.awr_report_text( :dbid,
-                         *
-ERROR at line 1:
-ORA-00904: "DBMS_WORKLOAD_REPOSITORY"."AWR_REPORT_TEXT": invalid identifier
-
-

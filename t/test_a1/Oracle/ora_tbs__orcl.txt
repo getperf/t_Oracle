@@ -1,7 +1,0 @@
-Date:16/05/26 05:49:21
-
-TABLESPACE_NAME               |  total_mb|   used_mb|     usage|available_mb
-SYSAUX                        |       920|    873.38|     94.93|       46.63
-UNDOTBS1                      |       135|     20.25|        15|      114.75
-USERS                         |    506.25|    483.44|     95.49|       22.81
-SYSTEM                        |       810|    800.69|     98.85|        9.31

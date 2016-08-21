@@ -67,7 +67,7 @@ Build the template
 Clone the project from Git Hub.
 
 ```
-(git clone )
+git clone https://github.com/getperf/t_Oracle
 ```
 
 Go to the project directory, initialize the site with the --template options.

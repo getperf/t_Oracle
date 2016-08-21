@@ -67,7 +67,7 @@ Install
 Git Hub からプロジェクトをクローンします。
 
 ```
-(git clone してプロジェクト複製)
+git clone https://github.com/getperf/t_Oracle
 ```
 
 プロジェクトディレクトリに移動して、--template オプション付きでサイトの初期化をします。
@@ -355,7 +355,7 @@ zabbix-cli --add node/Linux/{監視対象サーバ}/
 その他
 ======
 
-**Statspack導入の注意点**
+**Statspack運用上の注意点**
 
 Statspack を運用する場合は Statspack データ領域の定期メンテナンスをする必要があります。
 メンテナンスを怠ると、Statspack 実行時の負荷影響などで思わぬ障害が発生する場合が有ります。
