@@ -1,8 +1,0 @@
-ORACLE_BASE=/opt/oracle/app/oracle; export ORACLE_BASE
-ORACLE_HOME=${ORACLE_BASE}/product/10.2.0/db_1; export ORACLE_HOME
-NLS_LANG=Japanese_Japan.JA16EUC; export NLS_LANG
-ORA_NLS10=${ORACLE_HOME}/nls/data; export ORA_NLS10
-TNS_ADMIN=${ORACLE_HOME}/network/admin; export TNS_ADMIN
-LD_LIBRARY_PATH=${ORACLE_HOME}/lib32:/lib:/usr/lib:/usr/dt/lib; export LD_LIBRARY_PATH
-LD_LIBRARY_PATH_64=/usr/lib/64:/opt/SUNWspro/lib/64:${ORACLE_HOME}/lib64:${ORACLE_HOME}/lib; export LD_LIBRARY_PATH_64
-PATH=${ORACLE_HOME}/bin:/bin:/usr/bin:/usr/local/bin:/usr/ucb:/usr/sbin:.:${PATH}; export PATH
