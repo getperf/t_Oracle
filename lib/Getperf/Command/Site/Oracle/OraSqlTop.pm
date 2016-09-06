@@ -132,6 +132,7 @@ sub parse {
 			$query=~s/__graph_title__/${graph_title}/g;
 			if (my $rows = $data_info->cacti_db_query($query)) {
 				for my $row(@$rows) {
+
 					my $graph_templates_item_id = $row->[2] || 0;
 					my $data_template_data_id   = $row->[4] || 0;
 					my $sql_hash = shift(@sql_ranks);
@@ -148,7 +149,6 @@ sub parse {
 			}
 		}
 	}
-
 	return 1;
 }
 

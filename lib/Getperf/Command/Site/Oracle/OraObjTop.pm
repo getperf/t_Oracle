@@ -33,7 +33,7 @@ sub purge_object_rank_rrd_data {
 	my $limit_time  = $data_info->start_time_sec->epoch - $PURGE_RRD_HOUR * 3600;
 
 	# purge storage/Oracle/{sid}/device/ora_obj_topa__*.rrd
-	my $rrdfile_filter = "$storage_dir/Oracle/$instance/device/ora_obj_topa__\*.rrd";
+	my $rrdfile_filter = "$storage_dir/Oracle/$instance/device/ora_obj_top__\*.rrd";
 	open (my $in, "ls $rrdfile_filter |") || die "can't find '$rrdfile_filter' : $!";
 	while (my $rrdfile = <$in>) {
 		chomp $rrdfile;
@@ -61,7 +61,7 @@ sub parse {
 	my @headers = qw/bytes buffer_gets disk_reads/;
 
 	my %graph_headers = (
-		"buffer_gets" => "Object Buffer Gets Ranking",
+		"buffer_gets" => "Object Buffer Get Ranking",
 		"disk_reads"  => "Object Disk Read Ranking",
 	);
 
@@ -147,11 +147,11 @@ sub parse {
 					my $data_template_data_id   = $row->[4] || 0;
 					my $obj_key = shift(@obj_ranks);
 					if ($obj_key && $graph_templates_item_id && $data_template_data_id) {
-						my $rra = "<path_rra>/Oracle/${instance}/device/${metric}__${obj_key}.rrd";
+						my $rra = "<path_rra>/Oracle/${instance}/device/ora_obj_top__${obj_key}.rrd";
 						$self->update_cacti_graph_item($data_info, $obj_key, $graph_templates_item_id,
 							                           $data_template_data_id, $rra);
 					} else {
-						my $rra = "<path_rra>/Oracle/${instance}/device/${metric}__dummy.rrd";
+						my $rra = "<path_rra>/Oracle/${instance}/device/ora_obj_top__dummy.rrd";
 						$self->update_cacti_graph_item($data_info,, 'unkown', $graph_templates_item_id,
 							                           $data_template_data_id, $rra);
 					}
