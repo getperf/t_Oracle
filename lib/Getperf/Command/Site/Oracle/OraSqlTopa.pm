@@ -79,8 +79,8 @@ sub parse {
 	$data_info->step($step);
 	$data_info->is_remote(1);
 	# my $instance = $data_info->file_suffix;
-    my $instance = $data_info->file_name;
-    $instance=~s/^.+_//g;
+    my $instance = $data_info->file_suffix;
+    # $instance=~s/^.+_//g;
     my $sec  = $data_info->start_time_sec->epoch;
 	if (!$sec) {
 		return;
@@ -115,7 +115,7 @@ sub parse {
 		"WHERE gi.local_graph_id = g.local_graph_id " .
 		"    AND gi.task_item_id = dr.id " .
 		"    AND dr.local_data_id = dd.local_data_id " .
-		"    AND gi.graph_type_id in (4) " .
+		"    AND gi.graph_type_id in (7, 8) " .
 		"    AND g.title_cache = '__graph_title__' " .
 		"ORDER BY gi.sequence";
 

@@ -61,8 +61,7 @@ sub parse {
 
 	$data_info->step($step);
 	$data_info->is_remote(1);
-    my $instance = $data_info->file_name;
-    $instance=~s/^.+_//g;
+    my $instance = $data_info->file_suffix;
 	my $sec  = $data_info->start_time_sec->epoch;
 	if (!$sec) {
 		return;
