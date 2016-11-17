@@ -15,6 +15,7 @@ MODE=DEFAULT
 USER=perfstat/perfstat
 PURGE=YES
 PURGE_LEVEL=0
+CATEGORY="ORACLE"
 SCRIPT="ora12c"
 SNAPSHOT_LEVEL=5
 CHECK_PROCESS=YES
@@ -48,15 +49,17 @@ do
         ;;
     u) USER=$OPTARG
         ;;
+    c) CATEGORY=$OPTARG
+        ;;
     e) ERR=$OPTARG
         ;;
     d) SCRIPT=$OPTARG
         ;;
     \?)
         echo "Usage" 1>&2
-        echo "$CMDNAME [-s] [-n purgecnt] [-u user/pass[@tns]] [-i sid]" 1>&2
+        echo "$CMDNAME [-s] [-n purgecnt] [-u user/pass[@tns]] [-c cat] [-i sid]" 1>&2
         echo "$USAGE           [-l dir] [-r instance_num] [-d ora12c]\n" 1>&2
-        echo "$USAGE           [-v snaplevel] [-e err] [-x]" 1>&2
+        echo "$USAGE           [-v snaplevel] [-e err] [-d script] [-x]" 1>&2
         exit 1
         ;;
     esac
@@ -106,7 +109,7 @@ fi
 
 # Execute snap of statspack
 if [ "RUNSNAP" = "${MODE}" ]; then
-    ${SQLPLUS} -s ${USER} << EOF1  > ${ERR} 2>&1
+    ${SQLPLUS} -s ${USER} << EOF1 > ${ERR} 2>&1
     WHENEVER SQLERROR EXIT 1;
     exec statspack.snap(i_snap_level=>${SNAPSHOT_LEVEL});
 EOF1
@@ -119,8 +122,8 @@ fi
 
 # Open "snpids" work file
 NSNAPID=0
-if [ -f ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID} ]; then
-    exec 3<&0 < ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}
+if [ -f ${WORK}/snapids_${CATEGORY}_${SID} ]; then
+    exec 3<&0 < ${WORK}/snapids_${CATEGORY}_${SID}
     while read ID
     do
         NSNAPID=`expr $NSNAPID + 1`
@@ -157,7 +160,7 @@ fi
 if [ "${OLD_ID}" -gt "${NEW_ID}" ]; then
     echo "ERROR : Snapshot if OLD_ID(=${OLD_ID}) > NEW_ID(=${NEW_ID}). Maybe Drop/Create Statspack"
     echo "delete snapids."
-    rm ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}
+    rm ${WORK}/snapids_${CATEGORY}_${SID}
     exit 1
 fi
 
@@ -246,20 +249,22 @@ EOF6
     OLDEST_ID=`perl -ne 'print $1 if /^SNAPID (\d+)/' ${WORK}/snapid.$$`
     /bin/rm -f ${WORK}/snapid.$$
 
-    #       PURGE_ID=`expr $OLD_ID - $PURGE_LEVEL`
-    #       PURGE_ID=\$SNAP_$PURGE_LEVEL
-    eval PURGE_ID=\$SNAP_$PURGE_LEVEL
+    PURGEN=`expr $NSNAPID - $PURGE_LEVEL`
+    eval PURGE_ID=\$SNAP_$PURGEN
 
     if [ "${OLDEST_ID}" -ge "${PURGE_ID}" ]; then
         echo "No target of purge snapshot."
     else
     {
+        echo "Purge snapshot : ${OLDEST_ID}..${PURGE_ID} ."
         cd ${ORACLE_HOME}/rdbms/admin
         ${SQLPLUS} -s ${USER} << EOF7 > ${ERR} 2>&1
         WHENEVER SQLERROR EXIT 1;
         define losnapid=${OLDEST_ID}
         define hisnapid=${PURGE_ID}
-        @sppurge
+        #@sppurge
+        execute statspack.purge(i_begin_snap=>${OLDEST_ID}, i_end_snap=>${PURGE_ID}, i_extended_purge=>TRUE)
+
 EOF7
     }
     if [ 0 != $? ]; then
@@ -276,10 +281,10 @@ ID=`expr $NSNAPID - 1000`
 if [ 0 -gt "${ID}" ]; then
     ID=1
 fi
-if [ -f ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp ]; then
-    /bin/rm -f ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp
+if [ -f ${WORK}/snapids_${CATEGORY}_${SID}_tmp ]; then
+    /bin/rm -f ${WORK}/snapids_${CATEGORY}_${SID}_tmp
     if [ 0 != $? ]; then
-        echo "ERROR : /bin/rm -f ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp"
+        echo "ERROR : /bin/rm -f ${WORK}/snapids_${CATEGORY}_${SID}_tmp"
         exit 1
     fi
 fi
@@ -287,16 +292,16 @@ fi
 while [ ${ID} -le ${NSNAPID} ];
 do
     eval TMP_ID=\$SNAP_$ID
-    echo ${TMP_ID} >> ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp
+    echo ${TMP_ID} >> ${WORK}/snapids_${CATEGORY}_${SID}_tmp
     ID=`expr $ID + 1`
 done
 
 if [ "${OLD_ID}" -lt "${NEW_ID}" ]; then
-    echo $NEW_ID >> ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp
+    echo $NEW_ID >> ${WORK}/snapids_${CATEGORY}_${SID}_tmp
 fi
-/bin/mv -f ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}
+/bin/mv -f ${WORK}/snapids_${CATEGORY}_${SID}_tmp ${WORK}/snapids_${CATEGORY}_${SID}
 if [ 0 != $? ]; then
-    echo "ERROR : /bin/mv -f ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}_tmp ${WORK}/snapids_${SNAPSHOT_LEVEL}_${SID}"
+    echo "ERROR : /bin/mv -f ${WORK}/snapids_${CATEGORY}_${SID}_tmp ${WORK}/snapids_${CATEGORY}_${SID}"
     exit 1
 fi
 

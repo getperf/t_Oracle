@@ -114,6 +114,7 @@ select 'R'||rownum||' '||SNAP_ID
 from
 	(select SNAP_ID from DBA_HIST_SNAPSHOT
 		where SNAP_LEVEL = ${SNAPSHOT_LEVEL}
+        and INSTANCE_NUMBER = (SELECT INSTANCE_NUMBER from V\$INSTANCE)
 		order by SNAP_ID desc)
 where rownum <= 2 ;
 spool off
