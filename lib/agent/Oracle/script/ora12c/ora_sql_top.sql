@@ -1,54 +1,111 @@
-select
-    /*+ ORDERED */
-    to_char(s.SNAP_TIME, 'YYYY/MM/DD HH24:MI:SS') START_TIME,
-    a.OLD_HASH_VALUE,
-    a.EXECUTIONS,
-    a.DISK_READS,
-    a.BUFFER_GETS,
-    a.ROWS_PROCESSED,
-    a.CPU_TIME,
-    a.ELAPSED_TIME,
-    a.USER_IO_WAIT_TIME,
-    a.MODULE
-from
-    (
-        select
-            LAG(a.SNAP_ID, 1) OVER(partition by a.OLD_HASH_VALUE ORDER BY a.OLD_HASH_VALUE, a.SNAP_ID) as START_ID,
-            a.SNAP_ID END_ID,
-            a.OLD_HASH_VALUE,
-            a.EXECUTIONS         - LAG(a.EXECUTIONS, 1)        OVER(partition by a.OLD_HASH_VALUE ORDER BY a.OLD_HASH_VALUE, a.SNAP_ID) as EXECUTIONS,
-            a.DISK_READS         - LAG(a.DISK_READS, 1)        OVER(partition by a.OLD_HASH_VALUE ORDER BY a.OLD_HASH_VALUE, a.SNAP_ID) as DISK_READS,
-            a.BUFFER_GETS        - LAG(a.BUFFER_GETS, 1)       OVER(partition by a.OLD_HASH_VALUE ORDER BY a.OLD_HASH_VALUE, a.SNAP_ID) as BUFFER_GETS,
-            a.ROWS_PROCESSED     - LAG(a.ROWS_PROCESSED, 1)    OVER(partition by a.OLD_HASH_VALUE ORDER BY a.OLD_HASH_VALUE, a.SNAP_ID) as ROWS_PROCESSED,
-            (a.CPU_TIME          - LAG(a.CPU_TIME, 1)          OVER(partition by a.OLD_HASH_VALUE ORDER BY a.OLD_HASH_VALUE, a.SNAP_ID)) / 1000000 as CPU_TIME,
-            (a.ELAPSED_TIME      - LAG(a.ELAPSED_TIME, 1)      OVER(partition by a.OLD_HASH_VALUE ORDER BY a.OLD_HASH_VALUE, a.SNAP_ID)) / 1000000 as ELAPSED_TIME,
-            (a.USER_IO_WAIT_TIME - LAG(a.USER_IO_WAIT_TIME, 1) OVER(partition by a.OLD_HASH_VALUE ORDER BY a.OLD_HASH_VALUE, a.SNAP_ID)) / 1000000 as USER_IO_WAIT_TIME,
-            a.MODULE
-        from
-            stats$sql_summary a,
-            STATS$SNAPSHOT i
-        where
-            a.SNAP_ID      = i.SNAP_ID
-        AND i.SNAP_LEVEL   = 7
-        AND a.COMMAND_TYPE <> 47
-    ) a,
-    STATS$SNAPSHOT s,
-    STATS$SNAPSHOT e
-where
-    a.START_ID = s.SNAP_ID
-and a.END_ID   = e.SNAP_ID
-and e.SNAP_ID = (
-        select
-            max(SNAP_ID)
-        from
-            STATS$SNAPSHOT
-        where
-            SNAP_LEVEL = 7
-    )
-and CPU_TIME     > 0
-AND ELAPSED_TIME > 0
-AND EXECUTIONS   > 0
-order by
-    CPU_TIME DESC
+SELECT 
+  * 
+FROM 
+( SELECT /*+ USE_NL(T) */
+    TO_CHAR ( I.SNAP_TIME , 
+      'YYYY/MM/DD HH24:MI:SS' ) TIME , 
+    E.HASH_VALUE , 
+    E.EXECUTIONS - 
+    NVL ( S.EXECUTIONS , 0 ) EXECUTIONS , 
+    E.DISK_READS - 
+    NVL ( S.DISK_READS , 0 ) DISK_READS , 
+    E.BUFFER_GETS - 
+    NVL ( S.BUFFER_GETS , 0 ) BUFFER_GETS , 
+    E.ROWS_PROCESSED - 
+    NVL ( S.ROWS_PROCESSED , 0 ) ROWS_PROCESSED , 
+    ( E.CPU_TIME - 
+      NVL ( S.CPU_TIME , 0 ) ) /1000000 CPU_TIME , 
+    ( E.ELAPSED_TIME - 
+      NVL ( S.ELAPSED_TIME , 0 ) ) /1000000 ELAPSED_TIME , 
+    UPPER ( SUBSTR ( LTRIM ( REPLACE( T.TEXT_SUBSET , CHR(13) ) , ' ' ) , 1 , 7 ) ) SQL , 
+--    REGEXP_SUBSTR( UPPER ( T.TEXT_SUBSET ), 'SELECT|INSERT|UPDATE|DELETE' ) SQL,
+    E.MODULE 
+  FROM 
+    STATS$SQL_SUMMARY E , 
+    STATS$SQL_SUMMARY S , 
+    STATS$SNAPSHOT I , 
+    STATS$SQLTEXT T 
+  WHERE 
+    I.SNAP_ID = E.SNAP_ID 
+    AND &STARTSNAP_ID = S.SNAP_ID ( + ) 
+    AND E.HASH_VALUE = S.HASH_VALUE ( + ) 
+--    AND E.HASH_VALUE = T.HASH_VALUE 
+    AND T.PIECE = 0 
+    AND E.DBID = S.DBID ( + ) 
+    AND E.SQL_ID = T.SQL_ID
+    AND E.SQL_ID = S.SQL_ID(+)
+    AND E.INSTANCE_NUMBER = S.INSTANCE_NUMBER ( + ) 
+    AND E.SNAP_ID = &ENDSNAP_ID ) 
+WHERE 
+  HASH_VALUE 
+  IN (
+    SELECT 
+      HASH_VALUE 
+    FROM 
+      ( 
+      SELECT 
+        E.HASH_VALUE , 
+        E.DISK_READS - 
+        NVL ( S.DISK_READS , 0 ) DISK_READS 
+      FROM 
+        STATS$SQL_SUMMARY E , 
+        STATS$SQL_SUMMARY S 
+      WHERE 
+        &STARTSNAP_ID = S.SNAP_ID ( + ) 
+        AND E.HASH_VALUE = S.HASH_VALUE ( + ) 
+        AND E.DBID = S.DBID ( + ) 
+        AND E.INSTANCE_NUMBER = S.INSTANCE_NUMBER ( + ) 
+        AND E.SNAP_ID = &ENDSNAP_ID 
+      ORDER BY 
+        DISK_READS 
+        DESC ) 
+    WHERE 
+      ROWNUM < 101 
+    UNION ALL 
+    SELECT 
+      HASH_VALUE 
+    FROM 
+      ( 
+      SELECT 
+        E.HASH_VALUE , 
+        E.BUFFER_GETS - 
+        NVL ( S.BUFFER_GETS , 0 ) BUFFER_GETS 
+      FROM 
+        STATS$SQL_SUMMARY E , 
+        STATS$SQL_SUMMARY S 
+      WHERE 
+        &STARTSNAP_ID = S.SNAP_ID ( + ) 
+        AND E.HASH_VALUE = S.HASH_VALUE ( + ) 
+        AND E.DBID = S.DBID ( + ) 
+        AND E.INSTANCE_NUMBER = S.INSTANCE_NUMBER ( + ) 
+        AND E.SNAP_ID = &ENDSNAP_ID 
+      ORDER BY 
+        BUFFER_GETS 
+        DESC ) 
+    WHERE 
+      ROWNUM < 101 
+    UNION ALL 
+    SELECT 
+      HASH_VALUE 
+    FROM 
+      ( 
+      SELECT 
+        E.HASH_VALUE , 
+        ( E.CPU_TIME - 
+          NVL ( S.CPU_TIME , 0 ) ) /1000000 CPU_TIME 
+      FROM 
+        STATS$SQL_SUMMARY E , 
+        STATS$SQL_SUMMARY S 
+      WHERE 
+        &STARTSNAP_ID = S.SNAP_ID ( + ) 
+        AND E.HASH_VALUE = S.HASH_VALUE ( + ) 
+        AND E.DBID = S.DBID ( + ) 
+        AND E.INSTANCE_NUMBER = S.INSTANCE_NUMBER ( + ) 
+        AND E.SNAP_ID = &ENDSNAP_ID 
+      ORDER BY 
+        CPU_TIME 
+        DESC ) 
+    WHERE 
+      ROWNUM < 101 
+  )  
 ;
-

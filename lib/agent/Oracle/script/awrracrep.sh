@@ -1,8 +1,7 @@
-#!/bin/sh
+#!/bin/ksh
 #
 # This procedure execute Oracle statspack snap and report.
 #
-
 LANG=C;export LANG
 COLUMNS=160;export COLUMNS
 #resize -s 100 160
@@ -29,7 +28,7 @@ ERR=
 
 # Get command option
 OPT=
-while getopts tsn:c:l:i:v:e:u:d:x OPT
+while getopts tsn:c:l:r:i:v:e:u:d:x OPT
 do
 	case $OPT in
 	x)	CHECK_PROCESS="NO"
@@ -40,6 +39,8 @@ do
 		;;
 	i)	SID=$OPTARG
 		;;
+    r) INSTANCE_NUM=$OPTARG
+        ;;
 	v)	SNAPSHOT_LEVEL=$OPTARG
 		;;
 	u)	USER=$OPTARG
@@ -112,7 +113,7 @@ WHENEVER SQLERROR EXIT 1;
 spool ${WORK}/newid.$$
 select 'R'||rownum||' '||SNAP_ID
 from
-	(select SNAP_ID from DBA_HIST_SNAPSHOT
+	(select distinct SNAP_ID from DBA_HIST_SNAPSHOT
 		where SNAP_LEVEL = ${SNAPSHOT_LEVEL}
 		order by SNAP_ID desc)
 where rownum <= 2 ;
@@ -146,8 +147,8 @@ if [ 0 -lt "${NEW_ID}" -a "${OLD_ID}" -lt "${NEW_ID}" ]; then
 		define num_days=1
 		define begin_snap=${OLD_ID}
 		define end_snap=${NEW_ID}
-		define report_name=${DIR}/awrreport_${SID}
-		@awrrpt
+		define report_name=${DIR}/awrrpt_rac__${SID}
+		@awrgrpt
 EOF2
 	}
 	if [ 0 != $? ]; then

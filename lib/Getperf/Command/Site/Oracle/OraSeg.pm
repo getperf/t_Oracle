@@ -11,7 +11,7 @@ sub parse {
     my ($self, $data_info) = @_;
 
 	my %results;
-	my $step = 3600;
+	my $step = 600;
 	my @headers = qw/mbyte/;
 
 	$data_info->is_remote(1);
@@ -24,7 +24,7 @@ sub parse {
 		$line=~s/(\r|\n)*//g;			# trim return code
 		my ($user, $type, @csvs) = split(/\s*\|\s*/, $line);
 		next if (!defined($user) || $user eq 'USERNAME');
-		my $tablespace = pop(@csvs);
+		# my $tablespace = pop(@csvs);
 		my $mbyte      = pop(@csvs);
 		$type = 'ETC'  if ($type!~/^(TABLE|INDEX)$/);
 		$type = lc $type;
@@ -38,6 +38,7 @@ sub parse {
 		my $output = "Oracle/${host}/device/ora_seg_${type}__${user}.txt";
 		my $data   = $results{$device};
 		$data_info->regist_device($host, 'Oracle', "ora_seg_${type}", $user, $user, \@headers);
+		# print Dumper $data;
 		$data_info->simple_report($output, $data, \@headers);
 	}
 	return 1;

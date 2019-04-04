@@ -12,7 +12,7 @@ sub parse {
     my ($self, $data_info) = @_;
 
 	my (%results, %zabbix_send_data);
-	my $step = 3600;
+	my $step = 600;
 	my @headers = qw/total_mb used_mb usage available_mb/;
 
 	$data_info->step($step);
