@@ -12,6 +12,10 @@ sub new {bless{},+shift}
 our $headers = get_headers();
 our $months  = get_months();
 
+# print Dumper \%{$headers->{_time_models}};
+# print Dumper $headers->{'_time_models'};
+# exit;
+
 sub trim {
     my $val = shift;
     $val =~ s/^ *(.*?) *$/$1/;
